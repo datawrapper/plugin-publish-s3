@@ -1,6 +1,9 @@
 {
     "name": "publish-s3",
-	"version": "0.1",
-	"author": "Gregor Aisch",
-	"createdAt": "2013"
+    "version": "0.1",
+    "author": "Gregor Aisch",
+    "repository": {
+    	"type": "git",
+    	"url": "git@github.com:datawrapper/plugin-publish-s3.git"
+    }
 }
