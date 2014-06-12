@@ -13,6 +13,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
+            DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
         }
     }
 
@@ -68,7 +69,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         return '//' . $cfg['bucket'] . '.s3.amazonaws.com/' . $chart->getID() . '/' . $chart->getPublicVersion() . '/index.html';
     }
 
-        /**
+    /**
      * Returns a fresh S3 instance
      */
     private function _getS3($cfg) {
@@ -77,6 +78,16 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             $s3->setEndpoint($cfg['endpoint']);
         }
         return $s3;
+    }
+
+    /**
+     * Returns URL to the chart hosted on S3
+     *
+     * @param chart Chart class
+     */
+    public function getBucketName() {
+        $cfg = $this->getConfig();
+        return $cfg['bucket'];
     }
 
 }
