@@ -54,7 +54,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         foreach ($files as $info) {
             $header = array();
             if (count($info) > 2) $header['Content-Type'] = $info[2];
-            if (isset($cfg['header-expires'])) $headers['Expires'] = $cfg['header-expires'];
+            if (isset($cfg['cache-control'])) $headers['cache-control'] = $cfg['cache-control'];
             $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
         }
     }
