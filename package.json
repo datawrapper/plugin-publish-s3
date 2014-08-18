@@ -4,6 +4,6 @@
     "author": "Gregor Aisch",
     "repository": {
     	"type": "git",
-    	"url": "git@github.com:datawrapper/plugin-publish-s3.git"
+    	"url": "git@bitbucket.org:jpp-cologne/plugin-publish-s3.git"
     }
 }
