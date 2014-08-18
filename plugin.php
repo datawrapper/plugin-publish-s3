@@ -14,6 +14,23 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
+
+            // add API endpoint to trigger publication of charts
+            // is this really needed?
+            DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function($app) {
+                return array(
+                    'url' => 'publish-s3/:chart_id',
+                    'method' => 'POST',
+                    'action' => function($chart_id) use ($app) {
+                        // actual publish process
+                        $chart = ChartQuery::findPk($chart_id);
+                        $user = DatawrapperSession::getUser();
+                        if ($chart && $chart->isWritable($user)) {
+                            $chart->publish();
+                        }
+                    }
+                );
+            });
         }
     }
 
@@ -37,6 +54,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         foreach ($files as $info) {
             $header = array();
             if (count($info) > 2) $header['Content-Type'] = $info[2];
+            if (isset($cfg['header-expires'])) $headers['Expires'] = $cfg['header-expires'];
             $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
         }
     }
