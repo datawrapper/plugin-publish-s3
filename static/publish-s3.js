@@ -49,6 +49,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                         publishChart();
                     });
                 }
+
+                $('.btn-publish', modal).click(function() {
+                    publishChart();
+                });
             });
         }
 
