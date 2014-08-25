@@ -7,7 +7,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
     $(function() {
 
-
         var action = $('.chart-actions .action-publish-s3'),
             modal, chart;
 
