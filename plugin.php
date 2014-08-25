@@ -31,7 +31,22 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     }
                 );
             });
+
+            DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
+                return array(
+                    'id' => 'publish-s3',
+                    'icon' => 'cloud-upload',
+                    'title' => __('Publish for Embedding'),
+                    'order' => 100
+                );
+            });
         }
+
+        // provide static assets files
+        $this->declareAssets(
+            array('publish-s3.js'),
+            "|/chart/[^/]+/publish|"
+        );
     }
 
     public function getRequiredLibraries() {
