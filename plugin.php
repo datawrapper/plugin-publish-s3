@@ -15,23 +15,6 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
 
-            // add API endpoint to trigger publication of charts
-            // is this really needed?
-            DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function($app) {
-                return array(
-                    'url' => 'publish-s3/:chart_id',
-                    'method' => 'POST',
-                    'action' => function($chart_id) use ($app) {
-                        // actual publish process
-                        $chart = ChartQuery::findPk($chart_id);
-                        $user = DatawrapperSession::getUser();
-                        if ($chart && $chart->isWritable($user)) {
-                            $chart->publish();
-                        }
-                    }
-                );
-            });
-
             DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
                 return array(
                     'id' => 'publish-s3',
