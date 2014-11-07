@@ -1,0 +1,21 @@
+{
+  "Publish for Embedding":"Publish for Embedding",
+  "Export to static image for printing":"Export to static image for printing",
+  "Your chart is now being uploaded, and should be ready in a minute.":"Your chart is now being uploaded, and should be ready in a minute.",
+  "Congrats, your chart has been published.":"Congrats, your chart has been published.",
+  "You have changed the chart after its last publication. To make these changes \nshow up you got to publish the chart again.":"You have changed the chart after its last publication. To make these changes \nshow up you got to publish the chart again.",
+  "Re-publish chart!":"Re-publish chart!",
+  "Chart URL has changed!":"Chart URL has changed!",
+  "The chart URL has changed due to the republication. The old versions will be \nredirected automatically within the next 24 hours.":"The chart URL has changed due to the republication. The old versions will be \nredirected automatically within the next 24 hours.",
+  "Embed into your website":"Embed into your website",
+  "Just copy &amp; paste the following code into your website.":"Just copy &amp; paste the following code into your website.",
+  "Width":"Width",
+  "Height":"Height",
+  "Copy Embed Code":"Copy Embed Code",
+  "Copy":"Copy",
+  "copied!":"copied!",
+  "Note":"Note",
+  "It may take a couple of minutes until the re-direction from old chart urls \nto the newest version takes effect.":"It may take a couple of minutes until the re-direction from old chart urls \nto the newest version takes effect.",
+  "Re-publish now":"Re-publish now",
+  "Done":"Done"
+}

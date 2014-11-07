@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <p class="lead" style="margin:0">{% trans "Export to static image for printing" %}</p>
+    <p class="lead" style="margin:0">{% trans "Publish Chart for Embedding" %}</p>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -14,7 +14,7 @@
                 {# show chart publish progress #}
                 <div class="alert alert-info publishing">
                     <p>
-                        <img src="/static/img/ajax-loader.gif" /> {% trans "Your chart is now being uploaded, and should be ready in a minute." %} 
+                        <img src="/static/img/ajax-loader.gif" /> {% trans "Your chart is now being uploaded, and should be ready in a few seconds." %}
                         <div class="progress progress-striped active">
                             <div class="bar" style="width: 0%;"></div>
                         </div>
@@ -23,7 +23,7 @@
             </div>
 
             <div class="publish-success hidden">
-                <p class="published alert alert-success">{% trans "Congrats, your chart has been published." %}</p>
+                <p class="published alert alert-success">{% trans "Congratulations, your chart has been published." %}</p>
             </div>
 
             <div class="republish-note hidden">
@@ -33,7 +33,7 @@
                     <a href="#republish" class="btn btn-republish btn-primary"><i class="fa fa-refresh"></i> {% trans "Re-publish chart!" %}</a>
                 </div>
             </div>
-            
+
             {# show warning that chart url has changed #}
             {% if republish %}
                 <div id="chart-url-change-warning" class="alert alert-warning" style="display:none">
@@ -49,16 +49,15 @@
             {# show embed link #}
             <h4>{% trans "Embed into your website" %}</h4>
             <p>{% trans "Just copy &amp; paste the following code into your website." %}</p>
+
             <form class="form-inline">
-                <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:4ex" value="600" /> px</label>&nbsp;&nbsp;
-                <label>{% trans "Height" %}: <input type="text" id="embed-height" class="input-small" style="width:4ex" value="400" /> px</label>
+                <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template='<iframe src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="%chart_width%" height="%chart_height%"></iframe>'></input><button class="btn" style="margin: 0 1ex;vertical-align:top" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button><span class="hidden copy-success">{% trans "copied!" %}</span>
 
-
-            <h4>{% trans "Copy Embed Code" %}</h4>
-
-            <textarea style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" class="span3" rows="1"><iframe src="{{ chartUrl }}" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="{{ chart.metadata.publish['embed-width'] }}" height="{{ chart.metadata.publish['embed-height'] }}"></iframe></textarea><button class="btn" style="margin: 0 1ex" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button><span class="hidden copy-success">{% trans "copied!" %}</span>
-
-            <div style="color: #999;margin-top:20px"><b>{% trans "Note" %}:</b> {% trans "It may take a couple of minutes until the re-direction from old chart urls to the newest version takes effect." %}</div>
+                <div style="margin-top:10px">
+                    <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:6ex" value="600px" /></label>&nbsp;&nbsp;
+                    <label>{% trans "Height" %}: <input type="text" id="embed-height" class="input-small" style="width:6ex" value="400px" /></label>
+                </div>
+            </form>
 
         </div>
     </div>
@@ -66,8 +65,8 @@
 
 </div>
 <div class="modal-footer">
-   <button class="btn-publish btn pull-left">{% trans "Re-publish now" %}</button>
-   <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Done" %}</button>
+   <button class="btn-publish btn pull-left">{% trans "Publish chart again" %}</button>
+   <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "Done" %}</button>
 </div>
 
 
