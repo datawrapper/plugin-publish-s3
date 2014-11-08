@@ -59,6 +59,15 @@
                 </div>
             </form>
 
+            {% if plugin_config['alias-ssl'] %}
+            <div class="publish-ssl" data-alias="{{ plugin_config['alias'] }}" data-alias-ssl="{{ plugin_config['alias-ssl'] }}" style="margin-top:10px">
+                <label style="font-weight:normal">
+                    <input type="checkbox" name="publish_s3_use_ssl" id="publish-s3-ssl" value="1" style="margin:0">
+                    {% trans "Embed in SSL website" %}
+                </label>
+            </div>
+            {% endif %}
+
         </div>
     </div>
 

@@ -64,6 +64,30 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     publishChart();
                 });
 
+                var $ssl = $('.publish-ssl');
+
+                if ($ssl.length) {
+                    var alias = $ssl.data('alias'),
+                        aliasSSL = $ssl.data('alias-ssl'),
+                        isSSL = chart.get('publicUrl') && chart.get('publicUrl').substr(0, aliasSSL.length) == aliasSSL;
+
+                    $ssl.find('input')
+                        // initial check
+                        .prop('checked', isSSL)
+                        // update embed code
+                        .on('change', function() {
+                            isSSL = $(this).prop('checked');
+                            if (isSSL) {
+                                chart.set('publicUrl', chart.get('publicUrl').replace(alias, aliasSSL));
+                                embedInput.val(embedInput.val().replace(alias, aliasSSL));
+                            } else {
+                                chart.set('publicUrl', chart.get('publicUrl').replace(aliasSSL, alias));
+                                embedInput.val(embedInput.val().replace(aliasSSL, alias));
+                            }
+                        });
+
+                }
+
                 /*
                  * publish chart
                  */
@@ -104,8 +128,13 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
                 function updateEmbedCode() {
                     $.getJSON('/api/charts/'+chart.get('id'), function(d) {
+                        // update public url, if SSL is set
+                        chart.attributes(d.data);
+                        if (isSSL) {
+                            chart.set('publicUrl', d.data.publicUrl.replace(alias, aliasSSL));
+                        }
                         embedInput.val(embedCodeTpl
-                            .replace('%chart_url%', d.data.publicUrl)
+                            .replace('%chart_url%', chart.get('publicUrl'))
                             .replace('%chart_width%', d.data.metadata.publish['embed-width'])
                             .replace('%chart_height%', d.data.metadata.publish['embed-height'])
                         );
