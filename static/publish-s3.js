@@ -85,7 +85,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                                 embedInput.val(embedInput.val().replace(aliasSSL, alias));
                             }
                         });
-
                 }
 
                 /*
@@ -123,7 +122,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                             if (pending) setTimeout(checkStatus, 300);
                         });
                     }
-                    updateEmbedCode();
+                    setTimeout(updateEmbedCode, 1000);
                 }
 
                 function updateEmbedCode() {
