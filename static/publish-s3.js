@@ -93,6 +93,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 function publishChart() {
                     var pending = true,
                         progress = $('.publish-progress', modal).removeClass('hidden').show();
+                    $('.publish-success', modal).addClass('hidden');
 
                     $.ajax({
                         url: '/api/charts/'+chart.get('id')+'/publish',
@@ -137,6 +138,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                             .replace('%chart_width%', d.data.metadata.publish['embed-width'])
                             .replace('%chart_height%', d.data.metadata.publish['embed-height'])
                         );
+                        $('.chart-embed-url', modal).attr('href', chart.get('publicUrl'))
+                            .html(chart.get('publicUrl'));
                     });
                 }
             });

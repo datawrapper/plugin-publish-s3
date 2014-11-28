@@ -8,8 +8,6 @@
             <i class="big fa fa-cloud-upload"></i>
         </div>
         <div class="span5">
-            <p><a href="{{ chartUrl }}">{{ chartUrl }}</a></p>
-
             <div class="publish-progress hidden">
                 {# show chart publish progress #}
                 <div class="alert alert-info publishing">
@@ -48,7 +46,11 @@
 
             {# show embed link #}
             <h4>{% trans "Embed into your website" %}</h4>
-            <p>{% trans "Just copy &amp; paste the following code into your website." %}</p>
+
+            <p>{% trans "You can embed your chart from this URL:" %}</p>
+            <p><a class="chart-embed-url" href="">—</a></p>
+
+            <p>{% trans "Or, just copy &amp; paste the following code into your website." %}</p>
 
             <form class="form-inline">
                 <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template='<iframe src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="%chart_width%" height="%chart_height%"></iframe>'></input><button class="btn" style="margin: 0 1ex;vertical-align:top" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button><span class="hidden copy-success">{% trans "copied!" %}</span>
