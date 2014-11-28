@@ -32,6 +32,9 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     .replace('%chart_height%', chart.get('metadata.publish.embed-height'))
                 );
 
+                $('.chart-embed-url', modal).attr('href', chart.get('publicUrl'))
+                    .html(chart.get('publicUrl'));
+
                 copy.attr('data-clipboard-text', embedInput.val());
 
                 var client = new ZeroClipboard(copy);
