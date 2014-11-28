@@ -33,7 +33,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 );
 
                 $('.chart-embed-url', modal).attr('href', chart.get('publicUrl'))
-                    .html(chart.get('publicUrl'));
+                    .html(chart.get('publicUrl') || 'n/a');
 
                 copy.attr('data-clipboard-text', embedInput.val());
 
