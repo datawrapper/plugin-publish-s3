@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <p class="lead" style="margin:0">{% trans "Publish Chart for Embedding" %}</p>
+    <p class="lead" style="margin:0">{% trans "modal / hed" %}</p>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -12,7 +12,7 @@
                 {# show chart publish progress #}
                 <div class="alert alert-info publishing">
                     <p>
-                        <img src="/static/img/ajax-loader.gif" /> {% trans "Your chart is now being uploaded, and should be ready in a few seconds." %}
+                        <img src="/static/img/ajax-loader.gif" /> {% trans "modal / progress / please-wait" %}
                         <div class="progress progress-striped active">
                             <div class="bar" style="width: 0%;"></div>
                         </div>
@@ -21,14 +21,14 @@
             </div>
 
             <div class="publish-success hidden">
-                <p class="published alert alert-success">{% trans "Congratulations, your chart has been published." %}</p>
+                <p class="published alert alert-success">{% trans "modal / progress / succes" %}</p>
             </div>
 
             <div class="republish-note hidden">
                 {# show link to re-publish #}
                 <div class="alert alert-warning">
-                    <p>{% trans "You have changed the chart after its last publication. To make these changes show up you got to publish the chart again." %}</p>
-                    <a href="#republish" class="btn btn-republish btn-primary"><i class="fa fa-refresh"></i> {% trans "Re-publish chart!" %}</a>
+                    <p>{% trans "modal / need-publish-again" %}</p>
+                    <a href="#republish" class="btn btn-republish btn-primary"><i class="fa fa-refresh"></i> {% trans "modal / button / republish" %}</a>
                 </div>
             </div>
 
@@ -38,19 +38,19 @@
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <div style="font-size:45px;line-height:55px;margin-left:-7px" class="pull-left">☝</div>
                     <div style="margin-left: 40px">
-                        <h4>{% trans "Chart URL has changed!" %}</h4>
-                        <div>{% trans "The chart URL has changed due to the republication. The old versions will be redirected automatically within the next 24 hours." %}</div>
+                        <h4>{% trans "modal / chart-url-changed / hed" %}</h4>
+                        <div>{% trans "modal / chart-url-changed / text" %}</div>
                     </div>
                 </div>
             {% endif %}
 
             {# show embed link #}
-            <h4>{% trans "Embed into your website" %}</h4>
+            <h4>{% trans "modal / embed / hed" %}</h4>
 
-            <p>{% trans "You can embed your chart from this URL:" %}</p>
+            <p>{% trans "modal / embed / text" %}</p>
             <p><a class="chart-embed-url" href="">—</a></p>
 
-            <p>{% trans "Or, just copy &amp; paste the following code into your website." %}</p>
+            <p>{% trans "modal / embed-code / text" %}</p>
 
             <form class="form-inline">
                 <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template='<iframe src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="%chart_width%" height="%chart_height%"></iframe>'></input><button class="btn" style="margin: 0 1ex;vertical-align:top" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button><span class="hidden copy-success">{% trans "copied!" %}</span>
@@ -65,7 +65,7 @@
             <div class="publish-ssl" data-alias="{{ plugin_config['alias'] }}" data-alias-ssl="{{ plugin_config['alias-ssl'] }}" style="margin-top:10px">
                 <label style="font-weight:normal">
                     <input type="checkbox" name="publish_s3_use_ssl" id="publish-s3-ssl" value="1" style="margin:0">
-                    {% trans "Embed in SSL website" %}
+                    {% trans "modal / embed-ssl" %}
                 </label>
             </div>
             {% endif %}
@@ -76,8 +76,8 @@
 
 </div>
 <div class="modal-footer">
-   <button class="btn-publish btn pull-left">{% trans "Publish chart again" %}</button>
-   <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "Done" %}</button>
+   <button class="btn-publish btn pull-left">{% trans "modal / button / republish" %}</button>
+   <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "modal / button / done" %}</button>
 </div>
 
 
