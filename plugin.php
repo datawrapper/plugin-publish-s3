@@ -19,8 +19,12 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 return array(
                     'id' => 'publish-s3',
                     'icon' => 'cloud-upload',
-                    'title' => __('Publish for Embedding'),
-                    'order' => 100
+                    'title' => __('publish / button'),
+                    'order' => 100,
+                    'banner' => array(
+                        'text' => __('publish / button / banner'),
+                        'style' => ''
+                    )
                 );
             });
         }
