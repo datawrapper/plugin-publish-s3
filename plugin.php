@@ -53,11 +53,26 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
     public function publish($files) {
         $cfg = $this->getConfig();
         $s3 = $this->_getS3($cfg);
+        $s3->setExceptions(true);
         foreach ($files as $info) {
             $header = array();
             if (count($info) > 2) $header['Content-Type'] = $info[2];
             if (isset($cfg['cache-control'])) $headers['cache-control'] = $cfg['cache-control'];
-            $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
+
+            try {
+                $result = $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
+            }
+            catch (Exception $e) {
+                // sometimes, S3 has hickups. It can scramble the MD5 Digest, kill connections or do other random
+                // stuff -- let's try the operation again if it failed.
+                try {
+                    $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
+                }
+                catch (Exception $e) {
+                    // well, time to scream for someone to do something
+                    trigger_error($e->getMessage(), E_USER_WARNING);
+                }
+            }
         }
     }
 
