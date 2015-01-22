@@ -3,7 +3,7 @@
     "version": "0.2.2",
     "author": "Gregor Aisch",
     "repository": {
-    	"type": "git",
-    	"url": "git@bitbucket.org:jpp-cologne/plugin-publish-s3.git"
+        "type": "git",
+        "url": "git@bitbucket.org:jpp-cologne/plugin-publish-s3.git"
     }
 }
