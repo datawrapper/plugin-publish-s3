@@ -2,6 +2,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <p class="lead" style="margin:0">{% trans "modal / hed" %}</p>
 </div>
+
 <div class="modal-body">
     <div class="row">
         <div class="span1" style="text-align:center">
@@ -47,8 +48,10 @@
             {# show embed link #}
             <h4>{% trans "modal / embed / hed" %}</h4>
 
-            <p>{% trans "modal / embed / text" %}</p>
-            <p><a class="chart-embed-url" href="">—</a></p>
+            <div id="chart-publish-url-link" style="display:none">
+                <p>{% trans "modal / embed / text" %}</p>
+                <p><a class="chart-embed-url" href="">—</a></p>
+            </div>
 
             <p>{% trans "modal / embed-code / text" %}</p>
 
@@ -72,14 +75,9 @@
 
         </div>
     </div>
-
-
 </div>
+
 <div class="modal-footer">
    <button class="btn-publish btn pull-left">{% trans "modal / button / republish" %}</button>
    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "modal / button / done" %}</button>
 </div>
-
-
-
-

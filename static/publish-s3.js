@@ -52,6 +52,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 } else {
                     // chart has been published before, show success
                     $('.publish-success', modal).removeClass('hidden');
+                    $('#chart-publish-url-link').show();
                 }
 
                 if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
@@ -87,6 +88,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                                 chart.set('publicUrl', chart.get('publicUrl').replace(aliasSSL, alias));
                                 embedInput.val(embedInput.val().replace(aliasSSL, alias));
                             }
+
+                            $('.chart-embed-url', modal)
+                                .attr('href', chart.get('publicUrl'))
+                                .html(chart.get('publicUrl'));
                         });
                 }
 
@@ -109,7 +114,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                             setTimeout(function() {
                                 progress.addClass('hidden');
                                 $('.publish-success', modal).removeClass('hidden');
-
+                                $('#chart-publish-url-link').show();
                             }, 400);
                         }, 1000);
                         pending = false;
