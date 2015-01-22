@@ -1,1 +1,20 @@
-{"publish \/ button":"Publish for Embedding","modal \/ hed":"Publish Chart for Embedding","modal \/ button  \/ done":"Done","modal \/ button \/ republish":"Re-publish chart!","modal \/ close":"Close","modal \/ progress \/ please-wait":"Your chart is now being uploaded, and should be ready in a few seconds.","modal \/ progress \/ succes":"Congratulations, your chart has been published.","modal \/ need-publish-again":"You have changed the chart after its last publication. To make these changes show up you got to publish the chart again.","modal \/ chart-url-changed \/ hed":"Chart URL has changed!","modal \/ chart-url-changed \/ text":"The chart URL has changed due to the republication. The old versions will be redirected automatically within the next 24 hours.","modal \/ embed \/ hed":"Embed into your website","modal \/ embed \/ text":"You can embed your chart from this URL:","modal \/ embed-code \/ text":"Or, just copy &amp; paste the following code into your website.","modal \/ embed-ssl":"Embed in SSL website","publish \/ button \/ banner":"-"}
+{
+  "publish \/ button": "publish \/ button",
+  "publish \/ button \/ banner": "publish \/ button \/ banner",
+  "modal \/ hed": "modal \/ hed",
+  "modal \/ progress \/ please-wait": "modal \/ progress \/ please-wait",
+  "modal \/ progress \/ succes": "modal \/ progress \/ succes",
+  "modal \/ need-publish-again": "modal \/ need-publish-again",
+  "modal \/ button \/ republish": "modal \/ button \/ republish",
+  "modal \/ chart-url-changed \/ hed": "modal \/ chart-url-changed \/ hed",
+  "modal \/ chart-url-changed \/ text": "modal \/ chart-url-changed \/ text",
+  "modal \/ embed \/ hed": "modal \/ embed \/ hed",
+  "modal \/ embed \/ text": "modal \/ embed \/ text",
+  "modal \/ embed-code \/ text": "modal \/ embed-code \/ text",
+  "Copy": "Copy",
+  "copied!": "copied!",
+  "Width": "Width",
+  "Height": "Height",
+  "modal \/ embed-ssl": "modal \/ embed-ssl",
+  "modal \/ button \/ done": "modal \/ button \/ done"
+}
