@@ -27,6 +27,10 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     )
                 );
             });
+
+            if (class_exists('DatawrapperPlugin_Oembed')) {
+                DatawrapperHooks::register(DatawrapperPlugin_Oembed::GET_PUBLISHED_URL_PATTERN, array($this, 'getUrlPattern'));
+            }
         }
 
         // provide static assets files
@@ -102,6 +106,18 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             return $cfg['alias'] . '/' . $chart->getID() . '/' . $chart->getPublicVersion() . '/';
         }
         return '//' . $cfg['bucket'] . '.s3.amazonaws.com/' . $chart->getID() . '/' . $chart->getPublicVersion() . '/index.html';
+    }
+
+    /**
+     * Returns a regular expression that can match the URLs of charts published
+     * on S3
+     */
+    public function getUrlPattern() {
+        $cfg = $this->getConfig();
+        if (!empty($cfg['alias'])) {
+            return $cfg['alias'] . '\/(?<id>.+?)/(?:\d+)(?:[\/])?';
+        }
+        return 'http[s]?:\/\/' . $cfg['bucket'] . '.s3.amazonaws.com\/(?<id>.+?)\/(?:\d+)(?:[\/](?:index\.html)?)?';
     }
 
     /**
