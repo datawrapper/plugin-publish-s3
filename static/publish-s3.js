@@ -58,15 +58,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
                     // chart has been edited since last publication
                     var repubNote = $('.republish-note', modal).removeClass('hidden');
-                    $('.btn-republish', modal).click(function() {
-                        repubNote.addClass('hidden');
-                        publishChart();
-                    });
+                    $('.btn-republish', modal).click(publishChart);
                 }
 
-                $('.btn-publish', modal).click(function() {
-                    publishChart();
-                });
+                $('.btn-publish', modal).click(publishChart);
 
                 var $ssl = $('.publish-ssl');
 
@@ -101,7 +96,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 function publishChart() {
                     var pending = true,
                         progress = $('.publish-progress', modal).removeClass('hidden').show();
-                    $('.publish-success', modal).addClass('hidden');
+
+                    $('.publish-success, .republish-note', modal).addClass('hidden');
 
                     $.ajax({
                         url: '/api/charts/'+chart.get('id')+'/publish',
