@@ -52,7 +52,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 } else {
                     // chart has been published before, show success
                     $('.publish-success', modal).removeClass('hidden');
-                    $('#chart-publish-url-link').show();
+                    $('#chart-publish-url-link', modal).show();
                 }
 
                 if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
@@ -126,7 +126,11 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     checkStatus();
                     $('.progress .bar', progress).css('width', '2%');
                     function checkStatus() {
-                        $.getJSON('/api/charts/'+chart.get('id')+'/publish/status', function(res) {
+                        $.ajax({
+                            dataType: 'json',
+                            url:      '/api/charts/'+chart.get('id')+'/publish/status',
+                            cache:    false
+                        }).success(function(res) {
                             $('.progress .bar', progress).css('width', res+'%');
                             if (pending) setTimeout(checkStatus, 300);
                         });
@@ -135,7 +139,11 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 }
 
                 function updateEmbedCode() {
-                    $.getJSON('/api/charts/'+chart.get('id'), function(d) {
+                    $.ajax({
+                        dataType: 'json',
+                        url:      '/api/charts/'+chart.get('id'),
+                        cache:    false
+                    }).success(function(d) {
                         // update public url, if SSL is set
                         chart.attributes(d.data);
                         if (isSSL) {
