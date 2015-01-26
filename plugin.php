@@ -116,11 +116,11 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         $cfg = $this->getConfig();
 
         if (!empty($cfg['alias-ssl'])) {
-            return $cfg['alias-ssl'] . '\/(?<id>.+?)/(?:\d+)(?:[\/])?';
+            return preg_quote($cfg['alias-ssl'], '/') . '\/(?<id>.+?)\/(?:\d+)(?:[\/])?';
         }
 
         if (!empty($cfg['alias'])) {
-            return $cfg['alias'] . '\/(?<id>.+?)/(?:\d+)(?:[\/])?';
+            return preg_quote($cfg['alias'], '/') . '\/(?<id>.+?)\/(?:\d+)(?:[\/])?';
         }
 
         return 'http[s]?:\/\/' . $cfg['bucket'] . '.s3.amazonaws.com\/(?<id>.+?)\/(?:\d+)(?:[\/](?:index\.html)?)?';
