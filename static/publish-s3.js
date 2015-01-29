@@ -37,11 +37,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
                 copy.attr('data-clipboard-text', embedInput.val());
 
-                // put another transparent layer in front of the BS backdrop
-                $('.pbs3').remove();
-                var myBackdrop = $('<div class="modal-backdrop pbs3" style="background:transparent"></div>').hide();
-                $('.modal-backdrop').after(myBackdrop);
-
                 var client = new ZeroClipboard(copy);
 
                 client.on('ready', function(readyEvent) {
@@ -104,14 +99,17 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
                     $('.publish-success, .republish-note', modal).addClass('hidden');
 
-                    $('.pbs3').show();
+                    // put another transparent layer in front of the BS backdrop
+                    $('.pbs3').remove();
+                    var myBackdrop = $('<div class="modal-backdrop pbs3" style="background:transparent"></div>');
+                    $('.modal-backdrop').after(myBackdrop);
 
                     $.ajax({
                         url: '/api/charts/'+chart.get('id')+'/publish',
                         type: 'post'
                     }).done(function() {
                         $('.progress .bar', progress).css('width', '100%');
-                        $('.pbs3').hide();
+                        $('.pbs3').remove();
                         updateEmbedCode();
                         setTimeout(function() {
                             progress.fadeOut(200);
@@ -124,7 +122,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                         pending = false;
                     }).fail(function() {
                         console.log('failed');
-                        $('.pbs3').hide();
+                        $('.pbs3').remove();
                         pending = false;
                     });
                     // in the meantime, check status periodically
