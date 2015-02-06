@@ -1,1 +1,20 @@
-{"Publish for Embedding":"Publish for Embedding","Export to static image for printing":"Export to static image for printing","Your chart is now being uploaded, and should be ready in a minute.":"Your chart is now being uploaded, and should be ready in a minute.","Congrats, your chart has been published.":"Congrats, your chart has been published.","You have changed the chart after its last publication. To make these changes \nshow up you got to publish the chart again.":"You have changed the chart after its last publication. To make these changes \nshow up you got to publish the chart again.","Re-publish chart!":"Re-publish chart!","Chart URL has changed!":"Chart URL has changed!","The chart URL has changed due to the republication. The old versions will be \nredirected automatically within the next 24 hours.":"The chart URL has changed due to the republication. The old versions will be \nredirected automatically within the next 24 hours.","Embed into your website":"Embed into your website","Just copy &amp; paste the following code into your website.":"Just copy &amp; paste the following code into your website.","Width":"Width","Height":"Height","Copy Embed Code":"Copy Embed Code","Copy":"Copy","copied!":"copied!","Note":"Note","It may take a couple of minutes until the re-direction from old chart urls \nto the newest version takes effect.":"It may take a couple of minutes until the re-direction from old chart urls \nto the newest version takes effect.","Re-publish now":"Re-publish now","Done":"Done","publish \/ button":"Diagramm einbetten","modal \/ hed":"Diagramm zum Einbetten ver\u00f6ffentlichen","modal \/ button  \/ done":"Fertig","modal \/ button \/ republish":"Neu ver\u00f6ffentlichen!","modal \/ close":"Schlie\u00dfen","modal \/ progress \/ please-wait":"Dein Diagramm wird ver\u00f6ffentlicht und ist in wenigen Sekunden fertig.","modal \/ progress \/ succes":"Gl\u00fcckwunsch, das Diagramm wurde ver\u00f6ffentlicht.","modal \/ need-publish-again":"Du hast dieses Diagramm ge\u00e4ndert seit der letzten Publikation. Damit diese \u00c4nderungen angezeigt werden, bitte das Diagramm erneut ver\u00f6ffentlichen und den Link austauschen.","modal \/ chart-url-changed \/ hed":"Die URL dieses Diagramms hat sich ge\u00e4ndert!","modal \/ chart-url-changed \/ text":"Die URL dieses Diagramms hat sich nach der erneuten Ver\u00f6ffentlichung ge\u00e4ndert. Aktualisiere die URL in deinem CMS, um die \u00c4nderung sofort sichtbar zu machen. Alternativ wird die alte URL in den n\u00e4chsten 24 Stunden automatisch aktualisiert.","modal \/ embed \/ hed":"Einbetten in deine Webseite","modal \/ embed \/ text":"Du kannst dieses Diagramm mit der folgenden URL einbetten:","modal \/ embed-code \/ text":"Oder kopieren &amp; und einsetzen mit dem folgenden Code:","modal \/ embed-ssl":"Als SSL in Webseite einbetten","publish \/ button \/ banner":"-","modal \/ button \/ done":"Fertig"}
+{
+  "publish \/ button":"publish \/ button",
+  "publish \/ button \/ banner":"publish \/ button \/ banner",
+  "modal \/ hed":"modal \/ hed",
+  "modal \/ progress \/ please-wait":"modal \/ progress \/ please-wait",
+  "modal \/ progress \/ succes":"modal \/ progress \/ succes",
+  "modal \/ need-publish-again":"modal \/ need-publish-again",
+  "modal \/ button \/ republish":"modal \/ button \/ republish",
+  "modal \/ chart-url-changed \/ hed":"modal \/ chart-url-changed \/ hed",
+  "modal \/ chart-url-changed \/ text":"modal \/ chart-url-changed \/ text",
+  "modal \/ embed \/ hed":"modal \/ embed \/ hed",
+  "modal \/ embed \/ text":"modal \/ embed \/ text",
+  "modal \/ embed-code \/ text":"modal \/ embed-code \/ text",
+  "Copy":"Kopieren",
+  "copied!":"Kopiert!",
+  "Width":"Breite",
+  "Height":"Höhe",
+  "modal \/ embed-ssl":"modal \/ embed-ssl",
+  "modal \/ button \/ done":"modal \/ button \/ done"
+}
