@@ -105,7 +105,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     $('.modal-backdrop').after(myBackdrop);
 
                     // disable buttons
-                    $('.btn', modal).addClass('disabled').prop('disabled', true);
+                    $('button, .btn', modal).addClass('disabled').prop('disabled', true);
 
                     $.ajax({
                         url: '/api/charts/'+chart.get('id')+'/publish',
@@ -113,7 +113,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     }).done(function() {
                         $('.progress .bar', progress).css('width', '100%');
                         $('.pbs3').remove();
-                        $('.btn', modal).removeClass('disabled').prop('disabled', false);
+                        $('button, .btn', modal).removeClass('disabled').prop('disabled', false);
                         updateEmbedCode();
                         setTimeout(function() {
                             progress.fadeOut(200);
@@ -127,7 +127,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     }).fail(function() {
                         console.log('failed');
                         $('.pbs3').remove();
-                        $('.btn', modal).removeClass('disabled').prop('disabled', false);
+                        $('button, .btn', modal).removeClass('disabled').prop('disabled', false);
                         pending = false;
                     });
                     // in the meantime, check status periodically
