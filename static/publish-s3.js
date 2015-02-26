@@ -104,12 +104,16 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     var myBackdrop = $('<div class="modal-backdrop pbs3" style="background:transparent"></div>');
                     $('.modal-backdrop').after(myBackdrop);
 
+                    // disable buttons
+                    $('.btn', modal).addClass('disabled').prop('disabled', true);
+
                     $.ajax({
                         url: '/api/charts/'+chart.get('id')+'/publish',
                         type: 'post'
                     }).done(function() {
                         $('.progress .bar', progress).css('width', '100%');
                         $('.pbs3').remove();
+                        $('.btn', modal).removeClass('disabled').prop('disabled', false);
                         updateEmbedCode();
                         setTimeout(function() {
                             progress.fadeOut(200);
@@ -123,6 +127,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     }).fail(function() {
                         console.log('failed');
                         $('.pbs3').remove();
+                        $('.btn', modal).removeClass('disabled').prop('disabled', false);
                         pending = false;
                     });
                     // in the meantime, check status periodically
