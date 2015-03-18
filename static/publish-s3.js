@@ -1,174 +1,216 @@
 require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
-
     ZeroClipboard.config({
         swfPath: '/static/plugins/publish-s3/ZeroClipboard.swf',
         forceHandCursor: true
     });
 
-    $(function() {
+    var isSSL = null, alias, aliasSSL, modal, chart;
 
-        var action = $('.chart-actions .action-publish-s3'),
-            modal, chart;
+    function applyChosenAlias(chart) {
+        var chartUrl = chart.get('publicUrl') || '';
 
-        $('a', action).click(function(e) {
-            e.preventDefault();
-            showModal();
+        // only do something if there is SSL support present
+        if (isSSL !== null) {
+            var hasSSL = chartUrl.indexOf(aliasSSL) === 0;
+
+            // switch alias if needed
+            if (hasSSL !== isSSL) {
+                chartUrl = chartUrl.replace(hasSSL ? aliasSSL : alias, hasSSL ? alias : aliasSSL);
+                chart.set('publicUrl', chartUrl);
+            }
+        }
+
+        return chartUrl;
+    }
+
+    function updateEmbedCode(chart) {
+        var embedInput   = $('input.embed-code', modal);
+        var embedCodeTpl = embedInput.data('embed-template');
+        var publish      = chart.get('metadata.publish');
+
+        embedInput.val(embedCodeTpl
+            .replace('%chart_url%', chart.get('publicUrl') || '')
+            .replace('%chart_width%', publish['embed-width'])
+            .replace('%chart_height%', publish['embed-height'])
+        );
+    }
+
+    function updateChartLink(chart) {
+        var url = chart.get('publicUrl');
+
+        $('.chart-embed-url', modal).attr('href', url || '#').text(url || 'N/A');
+    }
+
+    function fetchEmbedCode() {
+        $.ajax({
+            dataType: 'json',
+            url:      '/api/charts/' + chart.get('id'),
+            cache:    false
+        }).success(function(d) {
+            // update current chart object
+            chart.attributes(d.data);
+            applyChosenAlias(chart);
+
+            // update view
+            updateEmbedCode(chart);
+            updateChartLink(chart);
         });
+    }
 
-        function showModal() {
-            $.get('/plugins/publish-s3/publish-modal.twig', function(data) {
-                modal = $('<div class="publish-chart-action-modal modal hide">' + data + '</div>').modal();
-                chart = dw.backend.currentChart;
+    function modalExitStopper(stop) {
+        $('.pbs3').remove();
 
-                // init copy to clipboard
-                var copy = $('#copy-button', modal),
-                    copySuccess = $('.copy-success', modal),
-                    embedInput = $('input.embed-code', modal),
-                    embedCodeTpl = embedInput.data('embed-template');
+        if (stop) {
+            // put another transparent layer in front of the BS backdrop
+            var myBackdrop = $('<div class="modal-backdrop pbs3" style="background:transparent"></div>');
+            $('.modal-backdrop').after(myBackdrop);
+        }
 
-                embedInput.val(embedCodeTpl
-                    .replace('%chart_url%', chart.get('publicUrl'))
-                    .replace('%chart_width%', chart.get('metadata.publish.embed-width'))
-                    .replace('%chart_height%', chart.get('metadata.publish.embed-height'))
-                );
+        $('button, .btn', modal).toggleClass('disabled', stop).prop('disabled', stop);
+    }
 
-                $('.chart-embed-url', modal).attr('href', chart.get('publicUrl'))
-                    .html(chart.get('publicUrl') || 'n/a');
+    function publishChart() {
+        var
+            pending  = true,
+            progress = $('.publish-progress', modal);
 
-                copy.attr('data-clipboard-text', embedInput.val());
+        function setProgress(percent) {
+            $('.progress .bar', progress).css('width', percent + '%');
+        }
 
-                var client = new ZeroClipboard(copy);
-
-                client.on('ready', function(readyEvent) {
-                    client.on('aftercopy', function(event) {
-                        copySuccess.removeClass('hidden').show();
-                        copySuccess.fadeOut(2000);
-                    });
-                });
-
-                if (!chart.get('publishedAt')) {
-                    // chart has never been published before, so let's publish it right now!
-                    publishChart();
-                } else {
-                    // chart has been published before, show success
-                    $('.publish-success', modal).removeClass('hidden');
-                    $('#chart-publish-url-link', modal).show();
-                }
-
-                if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
-                    // chart has been edited since last publication
-                    var repubNote = $('.republish-note', modal).removeClass('hidden');
-                    $('.btn-republish', modal).click(publishChart);
-                }
-
-                $('.btn-publish', modal).click(publishChart);
-
-                var $ssl = $('.publish-ssl');
-
-                if ($ssl.length) {
-                    var alias = $ssl.data('alias'),
-                        aliasSSL = $ssl.data('alias-ssl'),
-                        isSSL = chart.get('publicUrl') && chart.get('publicUrl').substr(0, aliasSSL.length) == aliasSSL;
-
-                    $ssl.find('input')
-                        // initial check
-                        .prop('checked', isSSL)
-                        // update embed code
-                        .on('change', function() {
-                            isSSL = $(this).prop('checked');
-                            if (isSSL) {
-                                chart.set('publicUrl', chart.get('publicUrl').replace(alias, aliasSSL));
-                                embedInput.val(embedInput.val().replace(alias, aliasSSL));
-                            } else {
-                                chart.set('publicUrl', chart.get('publicUrl').replace(aliasSSL, alias));
-                                embedInput.val(embedInput.val().replace(aliasSSL, alias));
-                            }
-
-                            $('.chart-embed-url', modal)
-                                .attr('href', chart.get('publicUrl'))
-                                .html(chart.get('publicUrl'));
-                        });
-                }
-
-                /*
-                 * publish chart
-                 */
-                function publishChart() {
-                    var pending = true,
-                        progress = $('.publish-progress', modal).removeClass('hidden').show();
-
-                    $('.publish-success, .republish-note', modal).addClass('hidden');
-
-                    // put another transparent layer in front of the BS backdrop
-                    $('.pbs3').remove();
-                    var myBackdrop = $('<div class="modal-backdrop pbs3" style="background:transparent"></div>');
-                    $('.modal-backdrop').after(myBackdrop);
-
-                    // disable buttons
-                    $('button, .btn', modal).addClass('disabled').prop('disabled', true);
-
-                    $.ajax({
-                        url: '/api/charts/'+chart.get('id')+'/publish',
-                        type: 'post'
-                    }).done(function() {
-                        $('.progress .bar', progress).css('width', '100%');
-                        $('.pbs3').remove();
-                        $('button, .btn', modal).removeClass('disabled').prop('disabled', false);
-                        updateEmbedCode();
-                        setTimeout(function() {
-                            progress.fadeOut(200);
-                            setTimeout(function() {
-                                progress.addClass('hidden');
-                                $('.publish-success', modal).removeClass('hidden');
-                                $('#chart-publish-url-link').show();
-                            }, 400);
-                        }, 1000);
-                        pending = false;
-                    }).fail(function() {
-                        console.log('failed');
-                        $('.pbs3').remove();
-                        $('button, .btn', modal).removeClass('disabled').prop('disabled', false);
-                        pending = false;
-                    });
-                    // in the meantime, check status periodically
-                    checkStatus();
-                    $('.progress .bar', progress).css('width', '2%');
-                    function checkStatus() {
-                        $.ajax({
-                            dataType: 'json',
-                            url:      '/api/charts/'+chart.get('id')+'/publish/status',
-                            cache:    false
-                        }).success(function(res) {
-                            $('.progress .bar', progress).css('width', res+'%');
-                            if (pending) setTimeout(checkStatus, 300);
-                        });
-                    }
-                    setTimeout(updateEmbedCode, 1000);
-                }
-
-                function updateEmbedCode() {
-                    $.ajax({
-                        dataType: 'json',
-                        url:      '/api/charts/'+chart.get('id'),
-                        cache:    false
-                    }).success(function(d) {
-                        // update public url, if SSL is set
-                        chart.attributes(d.data);
-                        if (isSSL) {
-                            chart.set('publicUrl', d.data.publicUrl.replace(alias, aliasSSL));
-                        }
-                        embedInput.val(embedCodeTpl
-                            .replace('%chart_url%', chart.get('publicUrl'))
-                            .replace('%chart_width%', d.data.metadata.publish['embed-width'])
-                            .replace('%chart_height%', d.data.metadata.publish['embed-height'])
-                        );
-                        $('.chart-embed-url', modal).attr('href', chart.get('publicUrl'))
-                            .html(chart.get('publicUrl'));
-                    });
-                }
+        function checkStatus() {
+            $.ajax({
+                dataType: 'json',
+                url:      '/api/charts/'+chart.get('id')+'/publish/status',
+                cache:    false
+            }).success(function(res) {
+                setProgress(res);
+                if (pending) setTimeout(checkStatus, 300);
             });
         }
 
-    });
+        if (!chart.get('publishedAt')) {
+            $('.hold', modal).hide();
+        }
 
+        progress.removeClass('hidden').show();
+        $('.publish-success, .republish-note, #chart-url-change-warning', modal).addClass('hidden');
+
+        // prevent people from leaving the popup
+        modalExitStopper(true);
+
+        $.ajax({
+            url: '/api/charts/'+chart.get('id')+'/publish',
+            type: 'post'
+        }).done(function() {
+            setProgress(100);
+            modalExitStopper(false);
+            fetchEmbedCode();
+
+            setTimeout(function() {
+                progress.fadeOut(200);
+
+                setTimeout(function() {
+                    progress.addClass('hidden');
+                    $('.publish-success', modal).removeClass('hidden');
+                    $('#chart-publish-url-link').removeClass('hidden');
+                    $('.hold', modal).show();
+
+                    if (chart.get('publicVersion') > 1) {
+                        $('#chart-url-change-warning').removeClass('hidden');
+                    }
+                }, 400);
+            }, 1000);
+
+            pending = false;
+        }).fail(function() {
+            modalExitStopper(false);
+            pending = false;
+        });
+
+        // in the meantime, check status periodically
+        checkStatus();
+        setProgress(2);
+
+        setTimeout(fetchEmbedCode, 1000);
+    }
+
+    function showModal() {
+        $.get('/plugins/publish-s3/publish-modal.twig', function(data) {
+            modal = $('<div class="publish-chart-action-modal modal hide">' + data + '</div>').modal();
+            chart = dw.backend.currentChart;
+
+            // check for SSL support and read the configured aliases
+
+            var $ssl = $('.publish-ssl');
+
+            if ($ssl.length) {
+                alias    = $ssl.data('alias');
+                aliasSSL = $ssl.data('alias-ssl');
+                isSSL    = (chart.get('publicUrl') || '').indexOf(aliasSSL) === 0;
+
+                $ssl.find('input').prop('checked', isSSL).on('change', function() {
+                    isSSL = $(this).prop('checked');
+
+                    // update view
+                    applyChosenAlias(chart);
+                    updateEmbedCode(chart);
+                    updateChartLink(chart);
+                });
+            }
+
+            // init view
+
+            applyChosenAlias(chart);
+            updateEmbedCode(chart);
+            updateChartLink(chart);
+
+            // init copy to clipboard
+
+            var
+                copy        = $('#copy-button', modal),
+                copySuccess = $('.copy-success', modal),
+                embedInput  = $('input.embed-code', modal);
+
+            copy.attr('data-clipboard-text', embedInput.val());
+
+            var client = new ZeroClipboard(copy);
+
+            client.on('ready', function(readyEvent) {
+                client.on('aftercopy', function(event) {
+                    copySuccess.removeClass('hidden').show();
+                    copySuccess.fadeOut(2000);
+                });
+            });
+
+            // kick off publishing or show success note
+
+            if (!chart.get('publishedAt')) {
+                // chart has never been published before, so let's publish it right now!
+                publishChart();
+            }
+            else {
+                // chart has been published before, show the link (but not the success message,
+                // as it's confusing because you think you just published the chart again).
+                $('#chart-publish-url-link', modal).removeClass('hidden');
+            }
+
+            // show republish note if needed
+
+            if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
+                // chart has been edited since last publication
+                $('.republish-note', modal).removeClass('hidden');
+                $('.btn-republish', modal).click(publishChart);
+            }
+
+            $('.btn-publish', modal).click(publishChart);
+        });
+    }
+
+    $(function() {
+        $('.chart-actions .action-publish-s3 a').click(function(e) {
+            e.preventDefault();
+            showModal();
+        });
+    });
 });
