@@ -1,28 +1,25 @@
 <?php
-
 /**
  * Datawrapper Publish S3
- *
  */
 
 class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
-
     public function init() {
         $cfg = $this->getConfig();
+
         if ($cfg) {
             DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
-
             DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
                 return array(
-                    'id' => 'publish-s3',
-                    'icon' => 'cloud-upload',
-                    'title' => __('publish / button'),
-                    'order' => 100,
+                    'id'     => 'publish-s3',
+                    'icon'   => 'cloud-upload',
+                    'title'  => __('publish / button'),
+                    'order'  => 100,
                     'banner' => array(
-                        'text' => __('publish / button / banner'),
+                        'text'  => __('publish / button / banner'),
                         'style' => ''
                     )
                 );
@@ -41,7 +38,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
     }
 
     public function getRequiredLibraries() {
-        return array('vendor/S3.php');
+        return array('vendor/S3.php', 'MockS3.php');
     }
 
     /**
@@ -56,12 +53,18 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      */
     public function publish($files) {
         $cfg = $this->getConfig();
-        $s3 = $this->_getS3($cfg);
-        $s3->setExceptions(true);
+        $s3  = $this->getS3($cfg);
+
         foreach ($files as $info) {
             $header = array();
-            if (count($info) > 2) $header['Content-Type'] = $info[2];
-            if (isset($cfg['cache-control'])) $header['cache-control'] = $cfg['cache-control'];
+
+            if (count($info) > 2) {
+                $header['Content-Type'] = $info[2];
+            }
+
+            if (isset($cfg['cache-control'])) {
+                $header['cache-control'] = $cfg['cache-control'];
+            }
 
             try {
                 $result = $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
@@ -87,8 +90,8 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      */
     public function unpublish($files) {
         $cfg = $this->getConfig();
-        $s3 = $this->_getS3($cfg);
-        $s3->setExceptions(true);
+        $s3  = $this->getS3($cfg);
+
         foreach ($files as $file) {
             $s3->deleteObject($cfg['bucket'], $file);
         }
@@ -129,11 +132,19 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
     /**
      * Returns a fresh S3 instance
      */
-    private function _getS3($cfg) {
-        $s3 = new S3($cfg['accesskey'], $cfg['secretkey']);
-        if (!empty($cfg['endpoint'])) {
-            $s3->setEndpoint($cfg['endpoint']);
+    private function getS3($cfg) {
+        if (isset($cfg['endpoint']) && $cfg['endpoint'] === 'mock') {
+            $s3 = new MockS3($cfg['directory']);
         }
+        else {
+            $s3 = new S3($cfg['accesskey'], $cfg['secretkey']);
+            $s3->setExceptions(true);
+
+            if (!empty($cfg['endpoint'])) {
+                $s3->setEndpoint($cfg['endpoint']);
+            }
+        }
+
         return $s3;
     }
 
