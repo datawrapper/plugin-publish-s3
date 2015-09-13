@@ -27,14 +27,9 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         var embedInput   = $('input.embed-code', modal);
         var embedCodeTpl = embedInput.data('embed-template');
         var publish      = chart.get('metadata.publish');
-        var url = chart.get('publicUrl') || '';
- 
-        if ($('#publish_s3_live_update').val() == "1") {
-            url = url.slice(0, -2);
-        }
 
         embedInput.val(embedCodeTpl
-            .replace('%chart_url%', url)
+            .replace('%chart_url%', chart.get('publicUrl') || '')
             .replace('%chart_width%', publish['embed-width'])
             .replace('%chart_height%', publish['embed-height'])
         );
@@ -42,10 +37,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
     function updateChartLink(chart) {
         var url = chart.get('publicUrl');
- 
-        if ($('#publish_s3_live_update').val() == "1") {
-            url = url.slice(0, -2);
-        }
 
         $('.chart-embed-url', modal).attr('href', url || '#').text(url || 'N/A');
     }
