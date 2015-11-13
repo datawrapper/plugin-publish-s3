@@ -17,5 +17,7 @@
     "Height": "H\u00f6he",
     "modal \/ embed-ssl": "Als SSL in Webseite einbetten",
     "modal \/ button \/ done": "Fertig",
-    "modal \/ close": "Schlie\u00dfen"
+    "modal \/ close": "Schlie\u00dfen",
+    "btn / upgrade to publish": "Diagramm veröffentlichen",
+    "reached limit - please upgrade": "Achtung, für diesen Monat hast du die Grenze von %d Besuchen erreicht. Für unbegrenztes Veröffentlichen einfach [[auf Datawrapper Single upgraden]]."
 }

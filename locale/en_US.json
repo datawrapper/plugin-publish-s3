@@ -1,7 +1,8 @@
 {
     "publish \/ button": "Export for embedding",
+    "publish \/ button \/ banner": "-",
     "modal \/ hed": "Export Chart for Embedding",
-    "modal \/ button  \/ done": "Done",
+    "modal \/ button \/ done": "Done",
     "modal \/ button \/ republish": "Re-publish chart!",
     "modal \/ close": "Close",
     "modal \/ progress \/ please-wait": "Your chart is now being prepared for publication and should be ready in a few seconds.",
@@ -13,7 +14,6 @@
     "modal \/ embed \/ text": "You can embed your chart from this URL:",
     "modal \/ embed-code \/ text": "Or, just copy &amp; paste the following code into your website.",
     "modal \/ embed-ssl": "Embed in SSL website",
-    "publish \/ button \/ banner": "-",
-    "modal \/ button \/ done": "Done",
+    "btn / upgrade to publish": "Upgrade plan to publish chart",
     "reached limit - please upgrade": "Hold on, you reached the free chart view limit for this month. Please [[upgrade to Datawrapper Single]] for unlimited publishing."
 }
