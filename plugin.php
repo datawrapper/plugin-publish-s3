@@ -11,7 +11,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
 
             $can_publish = true;
             
-            if (isset($cfg['limit-views'])) {
+            if (isset($cfg['limit-views']) && $cfg['limit-views'] > 0) {
                 $user = DatawrapperSession::getUser();
                 if (count($user->getProducts()) == 0) {
                     // user has no products => free account
