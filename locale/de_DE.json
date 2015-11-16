@@ -18,6 +18,6 @@
     "modal \/ embed-ssl": "Als SSL in Webseite einbetten",
     "modal \/ button \/ done": "Fertig",
     "modal \/ close": "Schlie\u00dfen",
-    "btn / upgrade to publish": "Zum Einbetten Konto upgraden",
-    "reached limit - please upgrade": "Achtung, für diesen Monat hast du die Grenze von %d Besuchen erreicht. Für unbegrenztes Veröffentlichen einfach [[auf Datawrapper Single upgraden]]."
+    "btn \/ upgrade to publish": "Zum Einbetten Konto upgraden",
+    "reached limit - please upgrade": "Achtung, f\u00fcr diesen Monat hast du die Grenze von %d Besuchen erreicht. F\u00fcr unbegrenztes Ver\u00f6ffentlichen einfach [[auf Datawrapper Single upgraden]]."
 }

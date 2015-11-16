@@ -14,6 +14,6 @@
     "modal \/ embed \/ text": "You can embed your chart from this URL:",
     "modal \/ embed-code \/ text": "Or, just copy &amp; paste the following code into your website.",
     "modal \/ embed-ssl": "Embed in SSL website",
-    "btn / upgrade to publish": "Upgrade plan to embed chart",
-    "reached limit - please upgrade": "Hold on, you reached the free chart view limit for this month. Please [[upgrade to Datawrapper Single]] for unlimited publishing."
+    "btn \/ upgrade to publish": "Upgrade plan to embed chart",
+    "reached limit - please upgrade": "Hold on, you reached the free limit of %d chart views for this month. Please [[upgrade to Datawrapper Single]] for unlimited publishing."
 }

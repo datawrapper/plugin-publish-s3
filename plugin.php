@@ -58,17 +58,17 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         'order' => 100,
                         'url' => '/plans/single',
                         'class' => 'promo',
-                        // 'banner' => array(
-                        //     'text' => 'SINGLE',
-                        //     'style' => 'background: rgba(128, 0, 128,0.5)'
-                        // )
+                        'banner' => array(
+                            'text' => 'SINGLE',
+                            'style' => 'background: rgba(128, 0, 128,0.5)'
+                        )
                     );
                 });
 
-                DatawrapperHooks::register('publish_before_content', function() {
+                DatawrapperHooks::register('publish_before_content', function() use ($cfg) {
                     echo '<div class="alert alert-warning" style="text-align:center;margin-top:20px; margin-bottom:-10px">';
-                    echo str_replace(['[[', ']]'],
-                        ['<a href="/plans/single">', '</a>'],
+                    echo str_replace(['[[', ']]', '%d'],
+                        ['<a href="/plans/single">', '</a>', number_format2($cfg['limit-views'])],
                         __('reached limit - please upgrade'));
                     echo '</div>';
                 });
