@@ -54,8 +54,7 @@
             <p class="hold">{% trans "modal / embed-code / text" %}</p>
 
             <form class="form-inline hold">
-                {% set tpl = '<iframe src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="%chart_width%" height="%chart_height%"></iframe>' %}
-                <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template="{{ tpl }}" />
+                <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template="{{ plugin_config['iframe-template'] }}" />
                 <button class="btn" style="margin: 0 1ex;vertical-align:top" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button>
                 <span class="hidden copy-success">{% trans "copied!" %}</span>
 
