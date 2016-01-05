@@ -8,33 +8,76 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         $cfg = $this->getConfig();
 
         if ($cfg) {
-            DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));
+
+            $can_publish = true;
+            
+            if (isset($cfg['limit-views']) && $cfg['limit-views'] > 0) {
+                $user = DatawrapperSession::getUser();
+                if (count($user->getProducts()) == 0) {
+                    // user has no products => free account
+                    $analytics = DatawrapperPluginManager::getInstance('analytics-pixeltracker');
+                    if (!empty($analytics)) {
+                        $viewsThisMonth = $analytics->getUserChartViewsCurrentMonth($user->getID());
+                        if ($viewsThisMonth > $cfg['limit-views']) {
+                            $can_publish = false;
+                        }
+                    }
+                }
+            }
+
+            DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));    
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
-            DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
-                return array(
-                    'id'     => 'publish-s3',
-                    'icon'   => 'cloud-upload',
-                    'title'  => __('publish / button'),
-                    'order'  => 100,
-                    'banner' => array(
-                        'text'  => __('publish / button / banner'),
-                        'style' => ''
-                    )
-                );
-            });
+            
+            if ($can_publish) {    
+                DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
+                    return array(
+                        'id'     => 'publish-s3',
+                        'icon'   => 'cloud-upload',
+                        'title'  => __('publish / button'),
+                        'order'  => 100,
+                        'banner' => array(
+                            'text'  => __('publish / button / banner'),
+                            'style' => ''
+                        )
+                    );
+                });
 
+                // provide static assets files
+                $this->declareAssets(
+                    array('publish-s3.js'),
+                    "|/chart/[^/]+/publish|"
+                );
+            } else {
+                DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
+                    return array(
+                        'id' => 'publish-s3',
+                        'icon' => 'rocket',
+                        'title' => __('btn / upgrade to publish'),
+                        'order' => 100,
+                        'url' => '/plans/single',
+                        'class' => 'promo',
+                        'banner' => array(
+                            'text' => 'SINGLE',
+                            'style' => 'background: rgba(128, 0, 128,0.5)'
+                        )
+                    );
+                });
+
+                DatawrapperHooks::register('publish_before_content', function() use ($cfg) {
+                    echo '<div class="alert alert-warning" style="text-align:center;margin-top:20px; margin-bottom:-10px">';
+                    echo str_replace(['[[', ']]', '%d'],
+                        ['<a href="/plans/single">', '</a>', number_format2($cfg['limit-views'])],
+                        __('reached limit - please upgrade'));
+                    echo '</div>';
+                });
+            }
+            
             if (class_exists('DatawrapperPlugin_Oembed')) {
                 DatawrapperHooks::register(DatawrapperPlugin_Oembed::GET_PUBLISHED_URL_PATTERN, array($this, 'getUrlPattern'));
             }
         }
-
-        // provide static assets files
-        $this->declareAssets(
-            array('publish-s3.js'),
-            "|/chart/[^/]+/publish|"
-        );
     }
 
     public function getRequiredLibraries() {
