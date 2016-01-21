@@ -28,6 +28,9 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         var embedCodeTpl = embedInput.data('embed-template');
         var publish      = chart.get('metadata.publish');
 
+        $('#embed-width', modal).val(publish['embed-width']);
+        $('#embed-height', modal).val(publish['embed-height']);
+
         embedInput.val(embedCodeTpl
             .replace('%chart_url%', chart.get('publicUrl') || '')
             .replace('%chart_width%', publish['embed-width'])
@@ -164,6 +167,12 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             applyChosenAlias(chart);
             updateEmbedCode(chart);
             updateChartLink(chart);
+
+            $('#embed-width, #embed-height').change(function() {
+                chart.set('metadata.publish.embed-width', $('#embed-width', modal).val());
+                chart.set('metadata.publish.embed-height', $('#embed-height', modal).val());
+                updateEmbedCode(chart);
+            });
 
             // init copy to clipboard
 
