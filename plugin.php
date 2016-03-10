@@ -47,7 +47,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 // provide static assets files
                 $this->declareAssets(
                     array('publish-s3.js'),
-                    "|/chart/[^/]+/publish|"
+                    "#/chart|map/[^/]+/publish#"
                 );
             } else {
                 DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
