@@ -89,6 +89,25 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             }).success(function(res) {
                 setProgress(res);
                 if (pending) setTimeout(checkStatus, 300);
+
+                if (res == 100) {
+                    fetchEmbedCode();
+
+                    setTimeout(function() {
+                        progress.fadeOut(200);
+
+                        setTimeout(function() {
+                            progress.addClass('hidden');
+                            $('.publish-success', modal).removeClass('hidden');
+                            $('#chart-publish-url-link').removeClass('hidden');
+                            $('.hold', modal).show();
+
+                            if (chart.get('publicVersion') > 1) {
+                                $('#chart-url-change-warning').removeClass('hidden');
+                            }
+                        }, 400);
+                    }, 1000);
+                }
             });
         }
 
@@ -108,27 +127,12 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         }).done(function() {
             setProgress(100);
             modalExitStopper(false);
-            fetchEmbedCode();
-
-            setTimeout(function() {
-                progress.fadeOut(200);
-
-                setTimeout(function() {
-                    progress.addClass('hidden');
-                    $('.publish-success', modal).removeClass('hidden');
-                    $('#chart-publish-url-link').removeClass('hidden');
-                    $('.hold', modal).show();
-
-                    if (chart.get('publicVersion') > 1) {
-                        $('#chart-url-change-warning').removeClass('hidden');
-                    }
-                }, 400);
-            }, 1000);
-
             pending = false;
         }).fail(function() {
+            // this typically happens when the request times out,
+            // which doesn't actually mean it has *failed*. 
+            // so we continue checking
             modalExitStopper(false);
-            pending = false;
         });
 
         // in the meantime, check status periodically
