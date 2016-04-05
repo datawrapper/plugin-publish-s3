@@ -31,11 +31,47 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         $('#embed-width', modal).val(publish['embed-width']);
         $('#embed-height', modal).val(publish['embed-height']);
 
-        embedInput.val(embedCodeTpl
+        var embedCode = embedCodeTpl
             .replace('%chart_url%', chart.get('publicUrl') || '')
             .replace('%chart_width%', publish['embed-width'])
             .replace('%chart_height%', publish['embed-height'])
-        );
+            .replace(/%chart_id%/g, chart.get('id'));
+
+        if (embedCodeTpl.indexOf("%embed_deltas%") > -1) {
+            var embedDeltas = {
+                100: 0,
+                200: 0, 
+                300: 0,
+                400: 0,
+                500: 0, 
+                600: 0,
+                700: 0,
+                800: 0, 
+                900: 0,
+                1000: 0,
+            };
+
+            var previewChart = $($('#iframe-vis')[0].contentDocument);
+
+            var defaultHeight = $('h1', previewChart).height() 
+                         + $('.chart-intro', previewChart).height() 
+                         + $('.dw-chart-notes', previewChart).height();
+
+            for (var width in embedDeltas) {
+                previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', width + "px");
+
+                var height = $('h1', previewChart).height() 
+                             + $('.chart-intro', previewChart).height() 
+                             + $('.dw-chart-notes', previewChart).height();
+
+                embedDeltas[width] = (height - defaultHeight);
+            }
+
+            previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
+            embedCode = embedCode.replace('%embed_deltas%', JSON.stringify(embedDeltas))
+        } 
+
+        embedInput.val(embedCode);
     }
 
     function updateChartLink(chart) {
