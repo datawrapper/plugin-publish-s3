@@ -57,6 +57,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                          + $('.chart-intro', previewChart).height() 
                          + $('.dw-chart-notes', previewChart).height();
 
+            var totalHeight = $('#iframe-vis').height();
+
             for (var width in embedDeltas) {
                 previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', width + "px");
 
@@ -64,7 +66,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                              + $('.chart-intro', previewChart).height() 
                              + $('.dw-chart-notes', previewChart).height();
 
-                embedDeltas[width] = height;
+                embedDeltas[width] = totalHeight + (height - defaultHeight);
             }
 
             previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
