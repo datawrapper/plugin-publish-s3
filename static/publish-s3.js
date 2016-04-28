@@ -37,7 +37,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             .replace('%chart_height%', publish['embed-height'])
             .replace(/%chart_id%/g, chart.get('id'));
 
-        if (embedCodeTpl.indexOf("%embed_deltas%") > -1) {
+        if (embedCodeTpl.indexOf("%embed_heights%") > -1) {
             var embedDeltas = {
                 100: 0,
                 200: 0, 
@@ -68,7 +68,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             }
 
             previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
-            embedCode = embedCode.replace('%embed_deltas%', JSON.stringify(embedDeltas))
+            embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas).replace(/"/g, "\\\""))
         } 
 
         embedInput.val(embedCode);
