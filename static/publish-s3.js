@@ -64,7 +64,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                              + $('.chart-intro', previewChart).height() 
                              + $('.dw-chart-notes', previewChart).height();
 
-                embedDeltas[width] = (height - defaultHeight);
+                embedDeltas[width] = height;
             }
 
             previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
