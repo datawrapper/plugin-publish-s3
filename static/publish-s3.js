@@ -119,6 +119,25 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             $('.progress .bar', progress).css('width', percent + '%');
         }
 
+        function publishFinished() {
+            fetchEmbedCode();
+
+            setTimeout(function() {
+                progress.fadeOut(200);
+
+                setTimeout(function() {
+                    progress.addClass('hidden');
+                    $('.publish-success', modal).removeClass('hidden');
+                    $('#chart-publish-url-link').removeClass('hidden');
+                    $('.hold', modal).show();
+
+                    if (chart.get('publicVersion') > 1) {
+                        $('#chart-url-change-warning').removeClass('hidden');
+                    }
+                }, 400);
+            }, 1000);
+        }
+
         function checkStatus() {
             $.ajax({
                 dataType: 'json',
@@ -129,22 +148,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 if (pending) setTimeout(checkStatus, 300);
 
                 if (res == 100) {
-                    fetchEmbedCode();
-
-                    setTimeout(function() {
-                        progress.fadeOut(200);
-
-                        setTimeout(function() {
-                            progress.addClass('hidden');
-                            $('.publish-success', modal).removeClass('hidden');
-                            $('#chart-publish-url-link').removeClass('hidden');
-                            $('.hold', modal).show();
-
-                            if (chart.get('publicVersion') > 1) {
-                                $('#chart-url-change-warning').removeClass('hidden');
-                            }
-                        }, 400);
-                    }, 1000);
+                    publishFinished();
                 }
             });
         }
@@ -166,6 +170,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             setProgress(100);
             modalExitStopper(false);
             pending = false;
+            publishFinished();
         }).fail(function() {
             // this typically happens when the request times out,
             // which doesn't actually mean it has *failed*. 
