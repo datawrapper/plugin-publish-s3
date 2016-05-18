@@ -202,6 +202,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     copySuccess.fadeOut(2000);
                 });
             });
+
+            copy.click(function() { return false; });
         });
 
         // kick off publishing or show success note
