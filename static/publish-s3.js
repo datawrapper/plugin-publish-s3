@@ -55,7 +55,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 }
 
                 previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
-                embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas).replace(/"/g, "&quot;"))
+                embedCode = embedCode.replace('%embed_heights_escaped%', JSON.stringify(embedDeltas).replace(/"/g, "&quot;"))
+                embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas));
             } 
 
             embedInput.val(embedCode);
@@ -77,7 +78,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         }).success(function(d) {
             // update current chart object
             chart.attributes(d.data);
-            applyChosenAlias(chart);
 
             // update view
             updateEmbedCode(chart);
