@@ -1,83 +1,115 @@
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <p class="lead" style="margin:0">{% trans "modal / hed" %}</p>
-</div>
+<div class="publish-chart-action-modal modal hide publish-s3">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <p class="lead" style="margin:0">{% trans "modal / hed" %}</p>
+    </div>
 
-<div class="modal-body" style="max-height:500px">
-    <div class="row">
-        <div class="span1" style="text-align:center">
-            <i class="big fa fa-cloud-upload"></i>
-        </div>
-        <div class="span5">
-            <div class="publish-progress hidden">
-                {# show chart publish progress #}
-                <div class="alert alert-info publishing">
-                    <p>
-                        <img src="/static/img/ajax-loader.gif" /> {% trans "modal / progress / please-wait" %}
-                        <div class="progress progress-striped active">
-                            <div class="bar" style="width: 0%;"></div>
+    <div class="modal-body" style="max-height:500px">
+        <div class="row">
+            <div class="span1" style="text-align:center">
+                <i class="big fa fa-cloud-upload"></i>
+            </div>
+            <div class="span5">
+                <div class="publish-progress hidden">
+                    {# show chart publish progress #}
+                    <div class="alert alert-info publishing">
+                        <p>
+                            <img src="/static/img/ajax-loader.gif" /> {% trans "modal / progress / please-wait" %}
+                            <div class="progress progress-striped active">
+                                <div class="bar" style="width: 0%;"></div>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="publish-success hidden">
+                    <p class="published alert alert-success">{% trans "modal / progress / succes" %}</p>
+                </div>
+
+                <div class="republish-note hidden">
+                    {# show link to re-publish #}
+                    <div class="alert alert-warning">
+                        <p>{% trans "modal / need-publish-again" %}</p>
+                        <a href="#republish" class="btn btn-republish btn-primary"><i class="fa fa-refresh"></i> {% trans "modal / button / republish" %}</a>
+                    </div>
+                </div>
+
+                {# show warning that chart url has changed #}
+                <div id="chart-url-change-warning" class="alert alert-warning hidden">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <div style="font-size:45px;line-height:55px;margin-left:-7px" class="pull-left">☝</div>
+                    <div style="margin-left: 40px">
+                        <h4>{% trans "modal / chart-url-changed / hed" %}</h4>
+                        <div>{% trans "modal / chart-url-changed / text" %}</div>
+                    </div>
+                </div>
+
+                {# show embed link #}
+                <h4 class="hold">{% trans "modal / embed / hed" %}</h4>
+
+                <div class="embed-code hidden hold">
+                    <p>{% trans "publish / embed / direct-link" %} <a style="word-break:break-all; font-weight:bold" class="chart-embed-url" href="">—</a></p>
+                </div>
+
+                <style type="text/css">
+                    .embed-holder {
+                        border-left: 1px solid #ddd;
+                        padding: 20px;
+                        border-bottom: 1px solid #ddd;
+                        border-right: 1px solid #ddd;
+                        margin-bottom: 20px;
+                    }
+
+                    .embed-holder, .embed-nav {
+                        margin-right: 20px;
+                    }
+
+                    .nav.embed-nav {
+                        margin-bottom: 0px;
+                        margin-top: 20px;
+                    }
+
+                    .embed-holder .form-inline input {
+                        margin-top: 10px;
+                    }
+                </style>
+
+                <ul class="nav nav-tabs embed-nav embed-code hidden">
+                    {% for method in methods %}
+                        <li class="{% if method.selected %}active{% endif %}"><a href="#embed-method-{{ method.id }}" data-toggle="tab">{{ method.title }}</a></li>
+                    {% endfor %}
+                </ul>
+
+                <div class="embed-holder embed-code hidden tab-content">
+                    {% for method in methods %}
+                        <div id="embed-method-{{ method.id }}" class="{% if method.selected %}active{% endif %} tab-pane" data-tpl='{{ method.template|replace({"'": '&#39;'}) }}'> 
+                            {{ method.text|raw }}
+
+                            <form class="form-inline hold">
+                                <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template="{{ plugin_config['iframe-template'] }}" />
+                                <button class="btn copy-button" style="margin: 10px 1ex;vertical-align:top" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button>
+                                <span class="hidden copy-success">{% trans "copied!" %}</span>
+                            </form>
                         </div>
-                    </p>
+
+                    {% endfor %}
                 </div>
-            </div>
 
-            <div class="publish-success hidden">
-                <p class="published alert alert-success">{% trans "modal / progress / succes" %}</p>
-            </div>
-
-            <div class="republish-note hidden">
-                {# show link to re-publish #}
-                <div class="alert alert-warning">
-                    <p>{% trans "modal / need-publish-again" %}</p>
-                    <a href="#republish" class="btn btn-republish btn-primary"><i class="fa fa-refresh"></i> {% trans "modal / button / republish" %}</a>
+                {% if plugin_config['alias-ssl'] %}
+                <div class="publish-ssl hold" data-alias="{{ plugin_config['alias'] }}" data-alias-ssl="{{ plugin_config['alias-ssl'] }}" style="margin-top:10px">
+                    <label style="font-weight:normal">
+                        <input type="checkbox" name="publish_s3_use_ssl" id="publish-s3-ssl" value="1" style="margin:0">
+                        {% trans "modal / embed-ssl" %}
+                    </label>
                 </div>
+                {% endif %}
+
             </div>
-
-            {# show warning that chart url has changed #}
-            <div id="chart-url-change-warning" class="alert alert-warning hidden">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <div style="font-size:45px;line-height:55px;margin-left:-7px" class="pull-left">☝</div>
-                <div style="margin-left: 40px">
-                    <h4>{% trans "modal / chart-url-changed / hed" %}</h4>
-                    <div>{% trans "modal / chart-url-changed / text" %}</div>
-                </div>
-            </div>
-
-            {# show embed link #}
-            <h4 class="hold">{% trans "modal / embed / hed" %}</h4>
-
-            <div id="chart-publish-url-link" class="hidden hold">
-                <p>{% trans "modal / embed / text" %}</p>
-                <p><a class="chart-embed-url" href="">—</a></p>
-            </div>
-
-            <p class="hold">{% trans "modal / embed-code / text" %}</p>
-
-            <form class="form-inline hold">
-                <input type="text" class="embed-code span3" onClick="this.select();" style="font-size: 12px;padding:5px;white-space: nowrap;font-family: Consolas, monospace;color: #777;background: #fbfbfb;" id="iframe-code" data-embed-template="{{ plugin_config['iframe-template'] }}" />
-                <button class="btn" style="margin: 0 1ex;vertical-align:top" id="copy-button" data-clipboard-text="Copy Me!" title="Click to copy me."><i class="fa fa-files-o"></i> {% trans "Copy" %}</button>
-                <span class="hidden copy-success">{% trans "copied!" %}</span>
-
-                <div style="margin-top:10px">
-                    <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:6ex" value="600px" /></label>&nbsp;&nbsp;
-                    <label>{% trans "Height" %}: <input type="text" id="embed-height" class="input-small" style="width:6ex" value="400px" /></label>
-                </div>
-            </form>
-
-            {% if plugin_config['alias-ssl'] %}
-            <div class="publish-ssl hold" data-alias="{{ plugin_config['alias'] }}" data-alias-ssl="{{ plugin_config['alias-ssl'] }}" style="margin-top:10px">
-                <label style="font-weight:normal">
-                    <input type="checkbox" name="publish_s3_use_ssl" id="publish-s3-ssl" value="1" style="margin:0">
-                    {% trans "modal / embed-ssl" %}
-                </label>
-            </div>
-            {% endif %}
-
         </div>
     </div>
-</div>
 
-<div class="modal-footer">
-   <button class="btn-publish btn pull-left">{% trans "modal / button / republish" %}</button>
-   <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "modal / button / done" %}</button>
+    <div class="modal-footer">
+       <button class="btn-publish btn pull-left">{% trans "modal / button / republish" %}</button>
+       <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "modal / button / done" %}</button>
+    </div>
 </div>

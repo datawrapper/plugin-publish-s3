@@ -44,6 +44,54 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     );
                 });
 
+                DatawrapperHooks::register('publish_before_content', function() use ($cfg) {
+                    global $app;
+  
+                    $user = DatawrapperSession::getUser();
+                    $org = $user->getCurrentOrganization();
+                    $preferredEmbed = "responsive";
+                    $orgEmbeds = null;
+
+                    if (isset($org) && ($org != null)) {
+                        $embed = $org->getSettings('embed');
+  
+                        if (isset($embed["preferred_embed"])) {
+                            $preferredEmbed = $embed['preferred_embed'];
+                        }
+
+                        if ($preferredEmbed == "custom") {
+                            $customEmbeds = $embed['custom_embed'];
+                            $orgEmbeds = $customEmbeds;
+                            $orgEmbeds["selected"] = true;
+                        }
+                    }
+
+                    $page = array(
+                        "methods" => array(
+                            array(
+                                "id" => "responsive",
+                                "title" => __("publish / embed / responsive"),
+                                "text" => __("publish / embed / responsive / text"),
+                                "template" => '<iframe id="datawrapper-chart-%chart_id%" src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="100%" height="%chart_height%"></iframe><script type="text/javascript">var embedDeltas=%embed_heights%,chart=document.getElementById("datawrapper-chart-4VTai"),chartHeight=chart.offsetHeight,chartWidth=chart.offsetWidth,applyDelta=embedDeltas[Math.min(1000, Math.max(100*(Math.floor(chartWidth/100)), 100)))]||0,newHeight=chartHeight+applyDelta;chart.style.height=newHeight;chart.parentNode.style.paddingBottom=newHeight+"px";</script>',
+                                "selected" => ($preferredEmbed == "responsive" ? true : false)
+                            ),
+                            array(
+                                "id" => "iframe",
+                                "title" => __("publish / embed / iframe"),
+                                "text" => __("publish / embed / iframe / text"),
+                                "template" => '<iframe src="%chart_url%" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="%chart_width%" height="%chart_height%"></iframe>',
+                                "selected" => ($preferredEmbed == "iframe" ? true : false)
+                            )
+                        )
+                    );
+
+                    if ($orgEmbeds != null) 
+                        $page["methods"][] = $orgEmbeds;
+
+                    $app->render('plugins/publish-s3/publish-modal.twig', $page);
+                });
+
+
                 // provide static assets files
                 $this->declareAssets(
                     array('publish-s3.js'),
@@ -64,6 +112,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         )
                     );
                 });
+
 
                 DatawrapperHooks::register('publish_before_content', function() use ($cfg) {
                     echo '<div class="alert alert-warning" style="text-align:center;margin-top:20px; margin-bottom:-10px">';

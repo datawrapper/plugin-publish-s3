@@ -15,5 +15,10 @@
     "modal \/ embed-code \/ text": "Or, just copy &amp; paste the following code into your website.",
     "modal \/ embed-ssl": "Embed in SSL website",
     "btn \/ upgrade to publish": "Upgrade plan to embed chart",
-    "reached limit - please upgrade": "Hold on, you reached the free limit of %d chart views for this month. Please [[upgrade to Datawrapper Single]] for unlimited publishing."
+    "reached limit - please upgrade": "Hold on, you reached the free limit of %d chart views for this month. Please [[upgrade to Datawrapper Single]] for unlimited publishing.",
+    "publish \/ embed \/ responsive": "Responsive Embed",
+    "publish \/ embed \/ iframe": "iFrame",
+    "publish \/ embed \/ responsive \/ text": "<p>Copy and paste this HTML-snippet into your website or CMS to embed your chart responsively. Your chart will automatically adjust to your readers device size.<\/p><p>If that doesn't work with your CMS, you can also try embedding directly via iFrame by clicking on the <b>iFrame<\/b> tab above.<\/p>",
+    "publish \/ embed \/ iframe \/ text": "<p>Copy and paste this HTML-snippet into your website or CMS to embed your chart as an iFrame.<\/p>",
+    "publish \/ embed \/ direct-link": "This is the direct link to your chart:"
 }

@@ -19,5 +19,10 @@
     "modal \/ button \/ done": "Fertig",
     "modal \/ close": "Schlie\u00dfen",
     "btn \/ upgrade to publish": "Zum Einbetten Konto upgraden",
-    "reached limit - please upgrade": "Achtung, f\u00fcr diesen Monat hast du die Grenze von %d Besuchen erreicht. F\u00fcr unbegrenztes Ver\u00f6ffentlichen einfach [[auf Datawrapper Single upgraden]]."
+    "reached limit - please upgrade": "Achtung, f\u00fcr diesen Monat hast du die Grenze von %d Besuchen erreicht. F\u00fcr unbegrenztes Ver\u00f6ffentlichen einfach [[auf Datawrapper Single upgraden]].",
+    "publish \/ embed \/ responsive": "Responsives Einbetten",
+    "publish \/ embed \/ iframe": "iFrame",
+    "publish \/ embed \/ responsive \/ text": "<p>Kopiere dieses HTML-Snippet in deine Webseite oder CMS, um dein Diagramm responsiv einzubetten.<\/p><p>Falls das mit deinem CMS nicht funktioniert, kannst du dein Diagramm auch direkt als iFrame einbetten. Klicke daf\u00fcr auf den Tab <b>iFrame<\/b>.<\/p>",
+    "publish \/ embed \/ iframe \/ text": "<p>Kopiere dieses HTML-Snippet in deine Webseite oder CMS, um dein Diagramm als iFrame einzubetten.<\/p>",
+    "publish \/ embed \/ direct-link": "Das ist der direkte Link zu deinem Diagramm:"
 }

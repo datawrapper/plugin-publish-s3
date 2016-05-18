@@ -4,76 +4,63 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         forceHandCursor: true
     });
 
-    var isSSL = null, alias, aliasSSL, modal, chart;
-
-    function applyChosenAlias(chart) {
-        var chartUrl = chart.get('publicUrl') || '';
-
-        // only do something if there is SSL support present
-        if (isSSL !== null) {
-            var hasSSL = chartUrl.indexOf(aliasSSL) === 0;
-
-            // switch alias if needed
-            if (hasSSL !== isSSL) {
-                chartUrl = chartUrl.replace(hasSSL ? aliasSSL : alias, hasSSL ? alias : aliasSSL);
-                chart.set('publicUrl', chartUrl);
-            }
-        }
-
-        return chartUrl;
-    }
-
     function updateEmbedCode(chart) {
-        var embedInput   = $('input.embed-code', modal);
-        var embedCodeTpl = embedInput.data('embed-template');
-        var publish      = chart.get('metadata.publish');
+        var embedCodes = $('.embed-holder > div');
 
-        $('#embed-width', modal).val(publish['embed-width']);
-        $('#embed-height', modal).val(publish['embed-height']);
+        embedCodes.each(function(i, el) {
+            var embedCodeTpl = $(el).data('tpl'),
+              embedInput = $(el).find('input[type="text"]'),
+              embedCopyBtn = $(el).find('.copy-button'),
+              publish = chart.get('metadata.publish');
 
-        var embedCode = embedCodeTpl
-            .replace('%chart_url%', chart.get('publicUrl') || '')
-            .replace('%chart_width%', publish['embed-width'])
-            .replace('%chart_height%', publish['embed-height'])
-            .replace(/%chart_id%/g, chart.get('id'));
+            $('#embed-width', modal).val(publish['embed-width']);
+            $('#embed-height', modal).val(publish['embed-height']);
 
-        if (embedCodeTpl.indexOf("%embed_heights%") > -1) {
-            var embedDeltas = {
-                100: 0,
-                200: 0, 
-                300: 0,
-                400: 0,
-                500: 0, 
-                600: 0,
-                700: 0,
-                800: 0, 
-                900: 0,
-                1000: 0,
-            };
+            var embedCode = embedCodeTpl
+                .replace('%chart_url%', chart.get('publicUrl') || '')
+                .replace('%chart_width%', publish['embed-width'])
+                .replace('%chart_height%', publish['embed-height'])
+                .replace(/%chart_id%/g, chart.get('id'));
 
-            var previewChart = $($('#iframe-vis')[0].contentDocument);
+            if (embedCodeTpl.indexOf("%embed_heights%") > -1) {
+                var embedDeltas = {
+                    100: 0,
+                    200: 0, 
+                    300: 0,
+                    400: 0,
+                    500: 0, 
+                    600: 0,
+                    700: 0,
+                    800: 0, 
+                    900: 0,
+                    1000: 0,
+                };
 
-            var defaultHeight = $('h1', previewChart).height() 
-                         + $('.chart-intro', previewChart).height() 
-                         + $('.dw-chart-notes', previewChart).height();
+                var previewChart = $($('#iframe-vis')[0].contentDocument);
 
-            var totalHeight = $('#iframe-vis').height();
-
-            for (var width in embedDeltas) {
-                previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', width + "px");
-
-                var height = $('h1', previewChart).height() 
+                var defaultHeight = $('h1', previewChart).height() 
                              + $('.chart-intro', previewChart).height() 
                              + $('.dw-chart-notes', previewChart).height();
 
-                embedDeltas[width] = totalHeight + (height - defaultHeight);
-            }
+                var totalHeight = $('#iframe-vis').height();
 
-            previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
-            embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas).replace(/"/g, "&quot;"))
-        } 
+                for (var width in embedDeltas) {
+                    previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', width + "px");
 
-        embedInput.val(embedCode);
+                    var height = $('h1', previewChart).height() 
+                                 + $('.chart-intro', previewChart).height() 
+                                 + $('.dw-chart-notes', previewChart).height();
+
+                    embedDeltas[width] = totalHeight + (height - defaultHeight);
+                }
+
+                previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
+                embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas).replace(/"/g, "&quot;"))
+            } 
+
+            embedInput.val(embedCode);
+            embedCopyBtn.attr('data-clipboard-text', embedCode);
+        });
     }
 
     function updateChartLink(chart) {
@@ -128,7 +115,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 setTimeout(function() {
                     progress.addClass('hidden');
                     $('.publish-success', modal).removeClass('hidden');
-                    $('#chart-publish-url-link').removeClass('hidden');
+                    $('.embed-code').removeClass('hidden');
                     $('.hold', modal).show();
 
                     if (chart.get('publicVersion') > 1) {
@@ -186,47 +173,24 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
     }
 
     function showModal() {
-        $.get('/plugins/publish-s3/publish-modal.twig', function(data) {
-            modal = $('<div class="publish-chart-action-modal modal hide">' + data + '</div>').modal();
-            chart = dw.backend.currentChart;
+        modal = $('.publish-s3.modal').modal();
+        chart = dw.backend.currentChart;
 
-            // check for SSL support and read the configured aliases
+        updateEmbedCode(chart);
+        updateChartLink(chart);
 
-            var $ssl = $('.publish-ssl');
-
-            if ($ssl.length) {
-                alias    = $ssl.data('alias');
-                aliasSSL = $ssl.data('alias-ssl');
-                isSSL    = (chart.get('publicUrl') || '').indexOf(aliasSSL) === 0;
-
-                $ssl.find('input').prop('checked', isSSL).on('change', function() {
-                    isSSL = $(this).prop('checked');
-
-                    // update view
-                    applyChosenAlias(chart);
-                    updateEmbedCode(chart);
-                    updateChartLink(chart);
-                });
-            }
-
-            // init view
-
-            applyChosenAlias(chart);
+        $('#embed-width, #embed-height').change(function() {
+            chart.set('metadata.publish.embed-width', $('#embed-width', modal).val());
+            chart.set('metadata.publish.embed-height', $('#embed-height', modal).val());
             updateEmbedCode(chart);
-            updateChartLink(chart);
+        });
 
-            $('#embed-width, #embed-height').change(function() {
-                chart.set('metadata.publish.embed-width', $('#embed-width', modal).val());
-                chart.set('metadata.publish.embed-height', $('#embed-height', modal).val());
-                updateEmbedCode(chart);
-            });
-
-            // init copy to clipboard
-
+        // init copy to clipboard
+        $('.copy-button', modal).each(function(i, el) {
             var
-                copy        = $('#copy-button', modal),
+                copy        = $(el),
                 copySuccess = $('.copy-success', modal),
-                embedInput  = $('input.embed-code', modal);
+                embedInput  = copy.parent().find('input [type="text"]');
 
             copy.attr('data-clipboard-text', embedInput.val());
 
@@ -238,29 +202,29 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                     copySuccess.fadeOut(2000);
                 });
             });
-
-            // kick off publishing or show success note
-
-            if (!chart.get('publishedAt')) {
-                // chart has never been published before, so let's publish it right now!
-                publishChart();
-            }
-            else {
-                // chart has been published before, show the link (but not the success message,
-                // as it's confusing because you think you just published the chart again).
-                $('#chart-publish-url-link', modal).removeClass('hidden');
-            }
-
-            // show republish note if needed
-
-            if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
-                // chart has been edited since last publication
-                $('.republish-note', modal).removeClass('hidden');
-                $('.btn-republish', modal).click(publishChart);
-            }
-
-            $('.btn-publish', modal).click(publishChart);
         });
+
+        // kick off publishing or show success note
+
+        if (!chart.get('publishedAt')) {
+            // chart has never been published before, so let's publish it right now!
+            publishChart();
+        }
+        else {
+            // chart has been published before, show the link (but not the success message,
+            // as it's confusing because you think you just published the chart again).
+            $('.embed-code', modal).removeClass('hidden');
+        }
+
+        // show republish note if needed
+
+        if (chart.get('publishedAt') && chart.get('publishedAt') < chart.get('lastModifiedAt')) {
+            // chart has been edited since last publication
+            $('.republish-note', modal).removeClass('hidden');
+            $('.btn-republish', modal).click(publishChart);
+        }
+
+        $('.btn-publish', modal).click(publishChart);
     }
 
     $(function() {
