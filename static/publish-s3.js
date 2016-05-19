@@ -22,7 +22,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 .replace('%chart_height%', publish['embed-height'])
                 .replace(/%chart_id%/g, chart.get('id'));
 
-            if (embedCodeTpl.indexOf("%embed_heights%") > -1) {
+            if (embedCodeTpl.indexOf("embed_heights") > -1) {
                 var embedDeltas = {
                     100: 0,
                     200: 0, 
