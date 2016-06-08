@@ -208,7 +208,9 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
         // kick off publishing or show success note
 
-        if (!chart.get('publishedAt')) {
+        if (!chart.get('publishedAt')
+            || ((chart.get('publicUrl') != undefined) && 
+                (chart.get('publicUrl').indexOf('charts.datawrapper.de') > -1))) {
             // chart has never been published before, so let's publish it right now!
             publishChart();
         }
