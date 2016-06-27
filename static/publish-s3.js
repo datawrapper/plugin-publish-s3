@@ -210,7 +210,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
         if (!chart.get('publishedAt')
             || ((chart.get('publicUrl') != undefined) && 
-                (chart.get('publicUrl').indexOf('charts.datawrapper.de') > -1))) {
+                (chart.get('publicUrl').indexOf('charts.datawrapper.de') > -1) || 
+                (chart.get('publicUrl').indexOf('s3.eu-central-1') > -1))) {
             // chart has never been published before, so let's publish it right now!
             publishChart();
         }
