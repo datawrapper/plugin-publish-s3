@@ -98,8 +98,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
     }
 
     function publishChart() {
-        var
-            pending  = true,
+        var pending = true,
             progress = $('.publish-progress', modal);
 
         function setProgress(percent) {
@@ -108,6 +107,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
         function publishFinished() {
             fetchEmbedCode();
+
+            pending = false;
 
             setTimeout(function() {
                 progress.fadeOut(200);
@@ -131,11 +132,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 url:      '/api/charts/'+chart.get('id')+'/publish/status',
                 cache:    false
             }).success(function(res) {
-                setProgress(res);
-                if (pending) setTimeout(checkStatus, 300);
+                if (res != "") setProgress(res);
 
-                if (res == 100) {
-                    publishFinished();
+                if (pending) {
+                    setTimeout(checkStatus, 300);
                 }
             });
         }
@@ -145,31 +145,24 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         }
 
         progress.removeClass('hidden').show();
-        $('.publish-success, .republish-note, #chart-url-change-warning', modal).addClass('hidden');
-
-        // prevent people from leaving the popup
-        modalExitStopper(true);
+        $('.publish-success, .publish-error, .republish-note, #chart-url-change-warning', modal).addClass('hidden');
 
         $.ajax({
             url: '/api/charts/'+chart.get('id')+'/publish',
             type: 'post'
-        }).done(function() {
-            setProgress(100);
-            modalExitStopper(false);
-            pending = false;
-            publishFinished();
-        }).fail(function() {
-            // this typically happens when the request times out,
-            // which doesn't actually mean it has *failed*. 
-            // so we continue checking
-            modalExitStopper(false);
-        });
+        })
+        .done(function(res) {
+            publishFinished();   
+        })
+        .fail(function(res) {
+            pending = false; 
+            progress.hide();
+            $('.publish-error', modal).removeClass('hidden');
+            $('.publish-error .error-msg', modal).html(res.responseText);
+        })
 
-        // in the meantime, check status periodically
         checkStatus();
         setProgress(2);
-
-        setTimeout(fetchEmbedCode, 1000);
     }
 
     function showModal() {
