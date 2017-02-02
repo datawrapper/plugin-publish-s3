@@ -2,7 +2,7 @@
     "publish \/ button": "Diagramm einbetten",
     "publish \/ button \/ banner": "-",
     "modal \/ hed": "Diagramm zum Einbetten exportieren",
-    "modal \/ progress \/ please-wait": "Dein Diagramm wird jetzt exportiert.In wenigen Sekunden erh\u00e4lst du einen Link f\u00fcr die Einbettung. ",
+    "modal \/ progress \/ please-wait": "Dein Diagramm wird jetzt exportiert. In wenigen Sekunden erh\u00e4ltst du einen Link f\u00fcr die Einbettung. ",
     "modal \/ progress \/ succes": "Gl\u00fcckwunsch, das Diagramm kann jetzt eingebettet werden.",
     "modal \/ need-publish-again": "Du hast dieses Diagramm ge\u00e4ndert seit der letzten Publikation. Damit diese \u00c4nderungen angezeigt werden, bitte das Diagramm erneut exportieren und den Link austauschen.",
     "modal \/ button \/ republish": "Neu exportieren.",
