@@ -155,6 +155,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             publishFinished();   
         })
         .fail(function(res) {
+            if (res.status == 200) {
+                publishFinished();
+                return;
+            }
             pending = false; 
             progress.hide();
             $('.publish-error', modal).removeClass('hidden');
