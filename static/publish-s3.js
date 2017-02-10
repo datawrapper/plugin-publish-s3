@@ -203,6 +203,21 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             copy.click(function() { return false; });
         });
 
+        $('.download-chart', modal).click(function() {
+            $('.download-chart .fa').removeClass('fa-download').addClass('fa-spinner').addClass('fa-spin');
+
+            $.ajax({
+                'url': '/api/plugin/publish-s3/download-zip/' + chart.get('id'),
+                'method': 'POST'
+            }).success(function(res) {
+                alert (res);
+            }).error(function(res) {
+                $('.download-chart-error').html(res.responseText);
+            }).done(function() {
+                $('.download-chart .fa').addClass('fa-download').removeClass('fa-spinner').removeClass('fa-spin');   
+            });
+        });
+
         // kick off publishing or show success note
 
         if (!chart.get('publishedAt')
