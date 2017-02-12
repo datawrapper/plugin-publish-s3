@@ -151,10 +151,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             url: '/api/charts/'+chart.get('id')+'/publish',
             type: 'post'
         })
-        .done(function(res) {
+        .success(function(res) {
             publishFinished();   
         })
-        .fail(function(res) {
+        .fail(fuction(res) {
             if (res.status == 200) {
                 publishFinished();
                 return;
