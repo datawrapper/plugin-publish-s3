@@ -17,39 +17,42 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function ($app) use ($plugin) {
                 return array(
                     'url' => 'publish-s3/download-zip/:chartId',
-                    'method' => 'POST',
+                    'method' => 'GET',
                     'action' => function ($chartId) use ($app, $plugin) {
                         $chart = ChartQuery::create()->findPk($chartId);
+                        $chartId = $chart->getId();
                         $chartUrl = $chart->getPublicUrl();
 
                         /* create temporary directory */
                         $tmp_folder = dirname(__FILE__) . "/tmp/" . $chartId;
                         mkdir($tmp_folder, 0777);
 
-                        /* wget */
+                        /* download with wget */ 
                         $wget_cmd = "wget -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
                         exec($wget_cmd);
 
-                        /* zip commands */
-                        /* this one is good writes within tmp folder */
-                        // $zip_command = 'zip -r9 ' . $tmp_folder . '/' . $chartId . '.zip ' . $tmp_folder;
-
-                        /* this one writes to public www/api for download */
-                        // $zip_command = 'zip -r9 /home/jacob/datawrapper/www/downloads/' . $chartId . '.zip ' . $tmp_folder;
-                        /* check if file exists */
-                        // room for code for this if necessary
-                        // if (file_exists($file)) {
-                        $zip_command = 'zip -r9 ' . $chartId . '.zip ' . $tmp_folder;
+                        $filename = $chartId . '.zip';
+                        $zip_command = 'zip -j -r9 ' . $tmp_folder . '/' . $filename . ' ' . $tmp_folder;
                         $zip_file = exec($zip_command);
+
+                        $filepath = $tmp_folder . "/" . $filename;
+
+                        $res = $app->response();
+
+                        $res['Content-Description'] = 'File Transfer';
+                        $res['Content-Description'] = 'File Transfer';
+                        $res['Content-Type'] = 'application/octet-stream';
+                        $res['Content-Disposition'] = 'attachment;filename="'.basename($filepath).'"';
+                        $res['Expires'] = '0';
+                        $res['Cache-Control'] = 'must-revalidate';
+                        $res['Pragma'] = 'public';
+                        $res['Content-Length'] = filesize($filepath);
+
+                        readfile($filepath);
 
                         /* delete wget folder */
                         $remove_dir_command = "rm -rf " . $tmp_folder;
                         exec($remove_dir_command);
-
-                        // return download link
-                        $filename = $chartId.'.zip';
-                        echo "http://datawrapper.dev/api/download.php?file=" . $filename;
-                        
                     }
                 );
             });
