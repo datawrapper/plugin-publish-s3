@@ -210,7 +210,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 'url': '/api/plugin/publish-s3/download-zip/' + chart.get('id'),
                 'method': 'POST'
             }).success(function(res) {
-                alert (res);
+                // trigger download from link response
+                window.location = res;
             }).error(function(res) {
                 $('.download-chart-error').html(res.responseText);
             }).done(function() {

@@ -22,7 +22,34 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         $chart = ChartQuery::create()->findPk($chartId);
                         $chartUrl = $chart->getPublicUrl();
 
-                        print ($chartUrl);
+                        /* create temporary directory */
+                        $tmp_folder = dirname(__FILE__) . "/tmp/" . $chartId;
+                        mkdir($tmp_folder, 0777);
+
+                        /* wget */
+                        $wget_cmd = "wget -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
+                        exec($wget_cmd);
+
+                        /* zip commands */
+                        /* this one is good writes within tmp folder */
+                        // $zip_command = 'zip -r9 ' . $tmp_folder . '/' . $chartId . '.zip ' . $tmp_folder;
+
+                        /* this one writes to public www/api for download */
+                        // $zip_command = 'zip -r9 /home/jacob/datawrapper/www/downloads/' . $chartId . '.zip ' . $tmp_folder;
+                        /* check if file exists */
+                        // room for code for this if necessary
+                        // if (file_exists($file)) {
+                        $zip_command = 'zip -r9 ' . $chartId . '.zip ' . $tmp_folder;
+                        $zip_file = exec($zip_command);
+
+                        /* delete wget folder */
+                        $remove_dir_command = "rm -rf " . $tmp_folder;
+                        exec($remove_dir_command);
+
+                        // return download link
+                        $filename = $chartId.'.zip';
+                        echo "http://datawrapper.dev/api/download.php?file=" . $filename;
+                        
                     }
                 );
             });
