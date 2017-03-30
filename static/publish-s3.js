@@ -5,7 +5,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
     });
 
     function updateEmbedCode(chart) {
-        var embedCodes = $('.embed-holder > div');
+        var embedCodes = $('.embed-holder > div'),
+            codes = {};
 
         embedCodes.each(function(i, el) {
             var embedCodeTpl = $(el).data('tpl'),
@@ -60,8 +61,11 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             } 
 
             embedInput.val(embedCode);
+            codes[$(el).attr("id")] = embedCode;
             embedCopyBtn.attr('data-clipboard-text', embedCode);
         });
+
+        chart.set("metadata.publish.embed-codes", codes);
     }
 
     function updateChartLink(chart) {
@@ -154,7 +158,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         .success(function(res) {
             publishFinished();   
         })
-        .fail(fuction(res) {
+        .fail(function(res) {
             if (res.status == 200) {
                 publishFinished();
                 return;

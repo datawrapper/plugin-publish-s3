@@ -13,6 +13,19 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
+
+            DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function ($app) use ($plugin) {
+                return array(
+                    'url' => 'publish-s3/embed-code/:chartId',
+                    'method' => 'GET',
+                    'action' => function ($chartId) use ($app, $plugin) {
+                        $chart = ChartQuery::create()->findPk($chartId);
+                        $embedCodes = $chart->getMetadata('publish.embed-codes');
+                        if (empty($embedCodes)) { $embedCodes = [];}
+                        print (json_encode($embedCodes));
+                    }
+                );
+            });
             
             DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function ($app) use ($plugin) {
                 return array(
