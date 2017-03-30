@@ -20,6 +20,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     'method' => 'GET',
                     'action' => function ($chartId) use ($app, $plugin) {
                         $chart = ChartQuery::create()->findPk($chartId);
+                        if (!$chart) return;
                         $embedCodes = $chart->getMetadata('publish.embed-codes');
                         if (empty($embedCodes)) { $embedCodes = [];}
                         print (json_encode($embedCodes));
