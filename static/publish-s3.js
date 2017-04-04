@@ -162,11 +162,11 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             pending = false; 
             progress.hide();
 
-            checkStatus();
             $('.publish-error', modal).removeClass('hidden');
             $('.publish-error .error-msg', modal).html(res.responseText);
         })
 
+        checkStatus();
         setProgress(2);
     }
 
