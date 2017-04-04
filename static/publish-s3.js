@@ -4,7 +4,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         forceHandCursor: true
     });
 
-    function updateEmbedCode(chart) {
+    function updateEmbedCode(chart, hasNewLink) {
         var embedCodes = $('.embed-holder > div'),
             codes = {};
 
@@ -65,7 +65,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             embedCopyBtn.attr('data-clipboard-text', embedCode);
         });
 
-        chart.set("metadata.publish.embed-codes", codes);
+        if (hasNewLink) chart.set("metadata.publish.embed-codes", codes);
     }
 
     function updateChartLink(chart) {
@@ -84,7 +84,7 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             chart.attributes(d.data);
 
             // update view
-            updateEmbedCode(chart);
+            updateEmbedCode(chart, true);
             updateChartLink(chart);
         });
     }
@@ -159,17 +159,14 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             publishFinished();   
         })
         .fail(function(res) {
-            if (res.status == 200) {
-                publishFinished();
-                return;
-            }
             pending = false; 
             progress.hide();
+
+            checkStatus();
             $('.publish-error', modal).removeClass('hidden');
             $('.publish-error .error-msg', modal).html(res.responseText);
         })
 
-        checkStatus();
         setProgress(2);
     }
 
@@ -177,13 +174,13 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         modal = $('.publish-s3.modal').modal();
         chart = dw.backend.currentChart;
 
-        updateEmbedCode(chart);
+        updateEmbedCode(chart, false);
         updateChartLink(chart);
 
         $('#embed-width, #embed-height').change(function() {
             chart.set('metadata.publish.embed-width', $('#embed-width', modal).val());
             chart.set('metadata.publish.embed-height', $('#embed-height', modal).val());
-            updateEmbedCode(chart);
+            updateEmbedCode(chart, false);
         });
 
         // init copy to clipboard
