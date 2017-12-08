@@ -1,8 +1,6 @@
-require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
-    ZeroClipboard.config({
-        swfPath: '/static/plugins/publish-s3/ZeroClipboard.swf',
-        forceHandCursor: true
-    });
+require([], function() {
+
+    var modal;
 
     function updateEmbedCode(chart, hasNewLink) {
         var embedCodes = $('.embed-holder > div'),
@@ -62,14 +60,19 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
 
             embedInput.val(embedCode);
             codes[$(el).attr("id")] = embedCode;
-            embedCopyBtn.attr('data-clipboard-text', embedCode);
 
-            embedCopyBtn.click(function() {
+            embedCopyBtn.click(function(evt) {
+                evt.preventDefault();
                 embedInput.select();
                 try {
                     var successful = document.execCommand('copy');
                     var msg = successful ? 'successful' : 'unsuccessful';
                     console.log('Copying text command was ' + msg);
+                    if (successful) {
+                        var copySuccess = $('.copy-success', modal);
+                        copySuccess.removeClass('hidden').show();
+                        copySuccess.fadeOut(2000);
+                    }
                 } catch (err) {
                     // console.log('Oops, unable to copy');
                 }
@@ -189,27 +192,6 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             chart.set('metadata.publish.embed-width', $('#embed-width', modal).val());
             chart.set('metadata.publish.embed-height', $('#embed-height', modal).val());
             updateEmbedCode(chart, false);
-        });
-
-        // init copy to clipboard
-        $('.copy-button', modal).each(function(i, el) {
-            var
-                copy        = $(el),
-                copySuccess = $('.copy-success', modal),
-                embedInput  = copy.parent().find('input [type="text"]');
-
-            copy.attr('data-clipboard-text', embedInput.val());
-
-            var client = new ZeroClipboard(copy);
-
-            client.on('ready', function(readyEvent) {
-                client.on('aftercopy', function(event) {
-                    copySuccess.removeClass('hidden').show();
-                    copySuccess.fadeOut(2000);
-                });
-            });
-
-            copy.click(function() { return false; });
         });
 
         // kick off publishing or show success note
