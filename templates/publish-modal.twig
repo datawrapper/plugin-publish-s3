@@ -87,7 +87,7 @@
 
                 <div class="embed-holder embed-code hidden tab-content">
                     {% for method in methods %}
-                        <div id="embed-method-{{ method.id }}" class="{% if method.selected %}active{% endif %} tab-pane" data-tpl='{{ method.template|replace({"'": '&#39;'}) }}'> 
+                        <div id="embed-method-{{ method.id }}" class="{% if method.selected %}active{% endif %} tab-pane" data-tpl='{{ method.template|replace({"'": '&#39;'}) }}'>
                             {{ method.text|raw }}
 
                             <form class="form-inline hold">

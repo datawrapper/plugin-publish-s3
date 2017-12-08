@@ -26,21 +26,21 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             if (embedCodeTpl.indexOf("embed_heights") > -1) {
                 var embedDeltas = {
                     100: 0,
-                    200: 0, 
+                    200: 0,
                     300: 0,
                     400: 0,
-                    500: 0, 
+                    500: 0,
                     600: 0,
                     700: 0,
-                    800: 0, 
+                    800: 0,
                     900: 0,
                     1000: 0,
                 };
 
                 var previewChart = $($('#iframe-vis')[0].contentDocument);
 
-                var defaultHeight = $('h1', previewChart).height() 
-                             + $('.chart-intro', previewChart).height() 
+                var defaultHeight = $('h1', previewChart).height()
+                             + $('.chart-intro', previewChart).height()
                              + $('.dw-chart-notes', previewChart).height();
 
                 var totalHeight = $('#iframe-vis').height();
@@ -48,8 +48,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 for (var width in embedDeltas) {
                     previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', width + "px");
 
-                    var height = $('h1', previewChart).height() 
-                                 + $('.chart-intro', previewChart).height() 
+                    var height = $('h1', previewChart).height()
+                                 + $('.chart-intro', previewChart).height()
                                  + $('.dw-chart-notes', previewChart).height();
 
                     embedDeltas[width] = totalHeight + (height - defaultHeight);
@@ -58,11 +58,23 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
                 previewChart.find('h1, .chart-intro, .dw-chart-notes').css('width', "");
                 embedCode = embedCode.replace('%embed_heights_escaped%', JSON.stringify(embedDeltas).replace(/"/g, "&quot;"))
                 embedCode = embedCode.replace('%embed_heights%', JSON.stringify(embedDeltas));
-            } 
+            }
 
             embedInput.val(embedCode);
             codes[$(el).attr("id")] = embedCode;
             embedCopyBtn.attr('data-clipboard-text', embedCode);
+
+            embedCopyBtn.click(function() {
+                embedInput.select();
+                try {
+                    var successful = document.execCommand('copy');
+                    var msg = successful ? 'successful' : 'unsuccessful';
+                    console.log('Copying text command was ' + msg);
+                } catch (err) {
+                    // console.log('Oops, unable to copy');
+                }
+            });
+
         });
 
         if (hasNewLink) chart.set("metadata.publish.embed-codes", codes);
@@ -156,10 +168,10 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
             type: 'post'
         })
         .success(function(res) {
-            publishFinished();   
+            publishFinished();
         })
         .fail(function(res) {
-            publishFinished();   
+            publishFinished();
         })
 
         checkStatus();
@@ -203,8 +215,8 @@ require(['plugins/publish-s3/zeroclipboard'], function(ZeroClipboard) {
         // kick off publishing or show success note
 
         if (!chart.get('publishedAt')
-            || ((chart.get('publicUrl') != undefined) && 
-                (chart.get('publicUrl').indexOf('charts.datawrapper.de') > -1) || 
+            || ((chart.get('publicUrl') != undefined) &&
+                (chart.get('publicUrl').indexOf('charts.datawrapper.de') > -1) ||
                 (chart.get('publicUrl').indexOf('s3.eu-central-1') > -1))) {
             // chart has never been published before, so let's publish it right now!
             publishChart();
