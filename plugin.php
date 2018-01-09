@@ -22,14 +22,6 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
 
         $this->S3 = new S3Client($s3config);
 
-        // let's test S3 upload
-        $res = $this->S3->putObject([
-            'ACL' => 'public-read',
-            'Bucket' => $cfg['bucket'],
-            'Key' => 'testfile.txt',
-            'Body' => 'works'
-        ]);
-
         if ($cfg) {
             DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
