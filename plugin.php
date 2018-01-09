@@ -191,18 +191,8 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
 
             try {
                 $result = $this->S3->putObject($putObjectCfg);
-                // $result = $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
-            }
-            catch (Exception $e) {
-                // sometimes, S3 has hickups. It can scramble the MD5 Digest, kill connections or do other random
-                // stuff -- let's try the operation again if it failed.
-                // try {
-                //     $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
-                // }
-                // catch (Exception $e) {
-                    // well, time to scream for someone to do something
+            } catch (Exception $e) {
                 trigger_error($e->getMessage(), E_USER_WARNING);
-                // }
             }
         }
     }
@@ -214,10 +204,16 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      */
     public function unpublish($files) {
         $cfg = $this->getConfig();
-        $s3  = $this->getS3($cfg);
 
         foreach ($files as $file) {
-            $s3->deleteObject($cfg['bucket'], $file);
+            try {
+                $result = $this->S3->deleteObject([
+                    'Bucket' => $cfg['bucket'],
+                    'Key' => $file,
+                ]);
+            } catch (Exception $e) {
+                trigger_error($e->getMessage(), E_USER_WARNING);
+            }
         }
     }
 
