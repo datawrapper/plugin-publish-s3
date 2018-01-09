@@ -3,13 +3,35 @@
  * Datawrapper Publish S3
  */
 
+use Aws\S3\S3Client;
+
 class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
     public function init() {
         $cfg = $this->getConfig();
         $plugin = $this;
 
+        $s3config = [
+            'version' => '2006-03-01',
+            'credentials' => [
+                'key' => $cfg['accesskey'],
+                'secret' => $cfg['secretkey']
+            ]
+        ];
+        if (isset($cfg['region'])) $s3config['region'] = $cfg['region'];
+        if (isset($cfg['endpoint'])) $s3config['endpoint'] = $cfg['endpoint'];
+
+        $this->S3 = new S3Client($s3config);
+
+        // let's test S3 upload
+        $res = $this->S3->putObject([
+            'ACL' => 'public-read',
+            'Bucket' => $cfg['bucket'],
+            'Key' => 'testfile.txt',
+            'Body' => 'works'
+        ]);
+
         if ($cfg) {
-            DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));    
+            DatawrapperHooks::register(DatawrapperHooks::PUBLISH_FILES, array($this, 'publish'));
             DatawrapperHooks::register(DatawrapperHooks::UNPUBLISH_FILES, array($this, 'unpublish'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISHED_URL, array($this, 'getUrl'));
             DatawrapperHooks::register(DatawrapperHooks::GET_PUBLISH_STORAGE_KEY, array($this, 'getBucketName'));
@@ -27,7 +49,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     }
                 );
             });
-            
+
             DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function ($app) use ($plugin) {
                 return array(
                     'url' => 'publish-s3/download-zip/:chartId',
@@ -41,7 +63,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         $tmp_folder = dirname(__FILE__) . "/tmp/" . $chartId;
                         mkdir($tmp_folder, 0777);
 
-                        /* download with wget */ 
+                        /* download with wget */
                         $wget_cmd = "wget -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
                         exec($wget_cmd);
 
@@ -125,7 +147,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     )
                 );
 
-                if ($orgEmbeds != null) 
+                if ($orgEmbeds != null)
                     $page["methods"][] = $orgEmbeds;
 
                 $app->render('plugins/publish-s3/publish-modal.twig', $page);
@@ -137,15 +159,11 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 array('publish-s3.js'),
                 "#/chart|map/[^/]+/publish#"
             );
-        
+
             if (class_exists('DatawrapperPlugin_Oembed')) {
                 DatawrapperHooks::register(DatawrapperPlugin_Oembed::GET_PUBLISHED_URL_PATTERN, array($this, 'getUrlPattern'));
             }
         }
-    }
-
-    public function getRequiredLibraries() {
-        return array('vendor/S3.php', 'MockS3.php');
     }
 
     /**
@@ -155,37 +173,44 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      * e.g.
      *
      * array(
-     *     array('path/to/local/file', 'remote/file', 'text/plain')
+     *     array('path/t/olocal/file', 'remote/file', 'text/plain')
      * )
      */
     public function publish($files) {
         $cfg = $this->getConfig();
-        $s3  = $this->getS3($cfg);
 
         foreach ($files as $info) {
             $header = array();
 
+            $putObjectCfg = [
+                'ACL' => 'public-read',
+                'Bucket' => $cfg['bucket'],
+                'Key' => $info[1],
+                'SourceFile' => $info[0]
+            ];
+
             if (count($info) > 2) {
-                $header['Content-Type'] = $info[2];
+                $putObjectCfg['ContentType'] = $info[2];
             }
 
             if (isset($cfg['cache-control'])) {
-                $header['cache-control'] = $cfg['cache-control'];
+                $putObjectCfg['CacheControl'] = $cfg['cache-control'];
             }
 
             try {
-                $result = $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
+                $result = $this->S3->putObject($putObjectCfg);
+                // $result = $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
             }
             catch (Exception $e) {
                 // sometimes, S3 has hickups. It can scramble the MD5 Digest, kill connections or do other random
                 // stuff -- let's try the operation again if it failed.
-                try {
-                    $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
-                }
-                catch (Exception $e) {
+                // try {
+                //     $s3->putObjectFile($info[0], $cfg['bucket'], $info[1], S3::ACL_PUBLIC_READ, array(), $header);
+                // }
+                // catch (Exception $e) {
                     // well, time to scream for someone to do something
-                    trigger_error($e->getMessage(), E_USER_WARNING);
-                }
+                trigger_error($e->getMessage(), E_USER_WARNING);
+                // }
             }
         }
     }
