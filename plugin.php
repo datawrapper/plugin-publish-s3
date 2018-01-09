@@ -17,8 +17,8 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 'secret' => $cfg['secretkey']
             ]
         ];
-        if (isset($cfg['region'])) $s3config['region'] = $cfg['region'];
-        if (isset($cfg['endpoint'])) $s3config['endpoint'] = $cfg['endpoint'];
+        if (!empty($cfg['region'])) $s3config['region'] = $cfg['region'];
+        else if (!empty($cfg['endpoint'])) $s3config['endpoint'] = $cfg['endpoint'];
 
         $this->S3 = new S3Client($s3config);
 
