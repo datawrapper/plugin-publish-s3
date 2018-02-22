@@ -52,7 +52,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         $chartUrl = $chart->getPublicUrl();
 
                         /* create temporary directory */
-                        $tmp_folder = ROOT_PATH . "/tmp/" . $chartId;
+                        $tmp_folder = ROOT_PATH . "/tmp/" . $chartId . "-" . uniqid();
                         mkdir($tmp_folder, 0777);
 
                         /* download with wget */
