@@ -10,6 +10,8 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
         $cfg = $this->getConfig();
         $plugin = $this;
 
+        if (!isset($cfg['accesskey'])) return;
+
         $s3config = [
             'version' => '2006-03-01',
             'credentials' => [
