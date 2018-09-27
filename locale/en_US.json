@@ -3,7 +3,7 @@
   "publish / button / banner": "-",
   "modal / hed": "Export Chart for Embedding",
   "modal / button / done": "Done",
-  "modal / button / republish": "Re-publish chart!",
+  "modal / button / republish": "republish chart!",
   "modal / close": "Close",
   "modal / progress / please-wait": "Your chart is now being prepared for publication and should be ready in a few seconds.",
   "modal / progress / succes": "Congratulations, your chart can now be published on your site.",
