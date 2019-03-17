@@ -58,11 +58,11 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         mkdir($tmp_folder, 0777);
 
                         /* download with wget */
-                        $wget_cmd = "wget -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
+                        $wget_cmd = "wget --content-disposition -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
                         exec($wget_cmd);
 
                         $filename = $chartId . '.zip';
-                        $zip_command = 'zip -j -r9 ' . $tmp_folder . '/' . $filename . ' ' . $tmp_folder;
+                        $zip_command = 'zip -r ' . $tmp_folder . '/' . $filename . ' ' . $tmp_folder . '/*';
                         $zip_file = exec($zip_command);
 
                         $filepath = $tmp_folder . "/" . $filename;
