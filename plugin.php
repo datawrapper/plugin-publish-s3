@@ -49,27 +49,36 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                     'url' => 'publish-s3/download-zip/:chartId',
                     'method' => 'GET',
                     'action' => function ($chartId) use ($app, $plugin) {
+                        disable_cache($app);
                         $chart = ChartQuery::create()->findPk($chartId);
                         $chartId = $chart->getId();
                         $chartUrl = $chart->getPublicUrl();
 
                         /* create temporary directory */
                         $tmp_folder = ROOT_PATH . "/tmp/" . $chartId . "-" . uniqid();
+                        $filename = $chartId . '.zip';
+                        $filepath = $tmp_folder . "/" . $filename;
+
                         mkdir($tmp_folder, 0777);
 
                         /* download with wget */
-                        $wget_cmd = "wget -nd -nH -p -np -k -H http:" . $chartUrl . " -P " . $tmp_folder;
-                        exec($wget_cmd);
+                        $mkdir_cmd = "mkdir -p " . $tmp_folder;
+                        $wget_cmd = "wget -H -p -np -nd -nH -k http:" . $chartUrl;
+                        $zip_command = 'zip -r -j ' . $filename . ' ./*';
 
-                        $filename = $chartId . '.zip';
-                        $zip_command = 'zip -j -r9 ' . $tmp_folder . '/' . $filename . ' ' . $tmp_folder;
-                        $zip_file = exec($zip_command);
+                        $cmd = $mkdir_cmd . ' && cd ' . $tmp_folder . ' && ' . $wget_cmd;
+                        exec($cmd);
+                        exec('cd ' . $tmp_folder . ' && for file in ./*; do mv "$file" "${file%%\?*}"; done');
 
-                        $filepath = $tmp_folder . "/" . $filename;
+                        $index = file_get_contents($tmp_folder . '/index.html');
+                        $index = str_replace(' src="http', ' src=\"http', $index);
+                        $index = str_replace('\&quot;"', '\"', $index);
+                        file_put_contents($tmp_folder . '/index.html', $index);
+
+                        exec('cd ' . $tmp_folder . ' && ' . $zip_command);
 
                         $res = $app->response();
 
-                        $res['Content-Description'] = 'File Transfer';
                         $res['Content-Description'] = 'File Transfer';
                         $res['Content-Type'] = 'application/octet-stream';
                         $res['Content-Disposition'] = 'attachment;filename="'.basename($filepath).'"';
