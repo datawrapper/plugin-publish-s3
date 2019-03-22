@@ -73,7 +73,10 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                         $index = file_get_contents($tmp_folder . '/index.html');
                         $index = str_replace(' src="http', ' src=\"http', $index);
                         $index = str_replace('\&quot;"', '\"', $index);
+
                         file_put_contents($tmp_folder . '/index.html', $index);
+                        file_put_contents($tmp_folder . '/embed.js', 
+                            file_get_contents(dirname(__FILE__) . '/embed.js'));
 
                         exec('cd ' . $tmp_folder . ' && ' . $zip_command);
 
