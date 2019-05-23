@@ -44,61 +44,6 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 );
             });
 
-            DatawrapperHooks::register(DatawrapperHooks::PROVIDE_API, function ($app) use ($plugin) {
-                return array(
-                    'url' => 'publish-s3/download-zip/:chartId',
-                    'method' => 'GET',
-                    'action' => function ($chartId) use ($app, $plugin) {
-                        disable_cache($app);
-                        $chart = ChartQuery::create()->findPk($chartId);
-                        $chartId = $chart->getId();
-                        $chartUrl = $chart->getPublicUrl();
-
-                        /* create temporary directory */
-                        $tmp_folder = ROOT_PATH . "/tmp/" . $chartId . "-" . uniqid();
-                        $filename = $chartId . '.zip';
-                        $filepath = $tmp_folder . "/" . $filename;
-
-                        mkdir($tmp_folder, 0777);
-
-                        /* download with wget */
-                        $mkdir_cmd = "mkdir -p " . $tmp_folder;
-                        $wget_cmd = "wget -H -p -np -nd -nH -k http:" . $chartUrl;
-                        $zip_command = 'zip -r -j ' . $filename . ' ./*';
-
-                        $cmd = $mkdir_cmd . ' && cd ' . $tmp_folder . ' && ' . $wget_cmd;
-                        exec($cmd);
-                        exec('cd ' . $tmp_folder . ' && for file in ./*; do mv "$file" "${file%%\?*}"; done');
-
-                        $index = file_get_contents($tmp_folder . '/index.html');
-                        $index = str_replace(' src="http', ' src=\"http', $index);
-                        $index = str_replace('\&quot;"', '\"', $index);
-
-                        file_put_contents($tmp_folder . '/index.html', $index);
-                        file_put_contents($tmp_folder . '/embed.js', 
-                            file_get_contents(dirname(__FILE__) . '/embed.js'));
-
-                        exec('cd ' . $tmp_folder . ' && ' . $zip_command);
-
-                        $res = $app->response();
-
-                        $res['Content-Description'] = 'File Transfer';
-                        $res['Content-Type'] = 'application/octet-stream';
-                        $res['Content-Disposition'] = 'attachment;filename="'.basename($filepath).'"';
-                        $res['Expires'] = '0';
-                        $res['Cache-Control'] = 'must-revalidate';
-                        $res['Pragma'] = 'public';
-                        $res['Content-Length'] = filesize($filepath);
-
-                        readfile($filepath);
-
-                        /* delete wget folder */
-                        $remove_dir_command = "rm -rf " . $tmp_folder;
-                        exec($remove_dir_command);
-                    }
-                );
-            });
-
             DatawrapperHooks::register(DatawrapperHooks::GET_CHART_ACTIONS, function($chart) {
                 return array(
                     'id'     => 'publish-s3',
