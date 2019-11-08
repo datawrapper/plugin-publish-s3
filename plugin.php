@@ -61,7 +61,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
                 global $app;
 
                 $user = DatawrapperSession::getUser();
-                $org = $user->getCurrentOrganization();
+                $org = $chart->getOrganization();
                 $preferredEmbed = "responsive";
                 $orgEmbeds = null;
 
