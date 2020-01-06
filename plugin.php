@@ -76,7 +76,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      *     array('path/t/olocal/file', 'remote/file', 'text/plain')
      * )
      */
-    public function publish($files) {
+    public function publish($chart, $files) {
         $cfg = $this->getConfig();
 
         foreach ($files as $info) {
@@ -110,7 +110,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      *
      * @param files  list of remote file names (removeFile)
      */
-    public function unpublish($files) {
+    public function unpublish($chart, $files) {
         $cfg = $this->getConfig();
 
         foreach ($files as $file) {
@@ -143,7 +143,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      * Returns a regular expression that can match the URLs of charts published
      * on S3
      */
-    public function getUrlPattern() {
+    public function getUrlPattern($chart) {
         $cfg = $this->getConfig();
 
         if (!empty($cfg['alias-ssl'])) {
@@ -181,7 +181,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      *
      * @param chart Chart class
      */
-    public function getBucketName() {
+    public function getBucketName($chart) {
         $cfg = $this->getConfig();
         return $cfg['bucket'];
     }
