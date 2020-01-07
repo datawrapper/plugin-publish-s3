@@ -181,7 +181,7 @@ class DatawrapperPlugin_PublishS3 extends DatawrapperPlugin {
      *
      * @param chart Chart class
      */
-    public function getBucketName($chart) {
+    public function getBucketName($chart = null) {
         $cfg = $this->getConfig();
         return $cfg['bucket'];
     }
